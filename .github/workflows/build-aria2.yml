@@ -1,0 +1,31 @@
+name: Build aria2c.exe
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-aria2:
+    runs-on: ubuntu-latest
+    needs: build-dependencies
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Download pre-built dependencies
+      uses: actions/download-artifact@v3
+      with:
+        name: prebuilt-dependencies
+        path: dependencies/
+    - name: Install Meson and Ninja
+      run: sudo apt install -y meson ninja
+    - name: Configure Meson
+      run: meson setup build -Dprefix=.
+    - name: Build with Ninja
+      run: ninja -C build
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: aria2c
+        path: build/aria2c.exe
