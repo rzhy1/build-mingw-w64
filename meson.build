@@ -1,26 +1,48 @@
 project('aria2', 'c')
 
-# 依赖库路径
-zlib_dir = 'dependencies/zlib/build/install'
-zlib_ng_dir = 'dependencies/zlib-ng/build/install' #如果需要zlib-ng
-libxml2_dir = 'dependencies/libxml2/build/install'
-cares_dir = 'dependencies/c-ares/build/install'
-openssl_dir = 'dependencies/openssl/build/install'
-sqlite_dir = 'dependencies/sqlite/build/install'
+# 依赖库路径 (直接指向库文件和头文件)
+zlib_inc = 'dependencies/zlib/include'
+zlib_lib = 'dependencies/zlib/lib/libzlib.a'
+zlib_ng_inc = 'dependencies/zlib-ng/include' #如果需要zlib-ng
+zlib_ng_lib = 'dependencies/zlib-ng/lib/libz.a' #如果需要zlib-ng
+libxml2_inc = 'dependencies/libxml2/include'
+libxml2_lib = 'dependencies/libxml2/lib/libxml2.a'
+cares_inc = 'dependencies/c-ares/include'
+cares_lib = 'dependencies/c-ares/lib/libcares.a'
+sqlite_inc = 'dependencies/sqlite/include'
+sqlite_lib = 'dependencies/sqlite/lib/libsqlite3.a'
 
 
-# 声明依赖库
-zlib = dependency('zlib', fallback : [include_directories : zlib_dir, libraries : zlib_dir])
-zlib_ng = dependency('zlib-ng', fallback : [include_directories : zlib_ng_dir, libraries : zlib_ng_dir]) #如果需要zlib-ng
-libxml2 = dependency('libxml2', fallback : [include_directories : libxml2_dir, libraries : libxml2_dir])
-cares = dependency('c-ares', fallback : [include_directories : cares_dir, libraries : cares_dir])
-openssl = dependency('openssl', fallback : [include_directories : openssl_dir, libraries : openssl_dir])
-sqlite = dependency('sqlite3', fallback : [include_directories : sqlite_dir, libraries : sqlite_dir])
+# 声明依赖库，直接使用预编译库，避免系统查找
+zlib = declare_dependency(
+    include_directories : zlib_inc,
+    libraries : zlib_lib
+)
+
+zlib_ng = declare_dependency(
+    include_directories : zlib_ng_inc,
+    libraries : zlib_ng_lib
+) #如果需要zlib-ng
+
+libxml2 = declare_dependency(
+    include_directories : libxml2_inc,
+    libraries : libxml2_lib
+)
+
+cares = declare_dependency(
+    include_directories : cares_inc,
+    libraries : cares_lib
+)
+
+sqlite = declare_dependency(
+    include_directories : sqlite_inc,
+    libraries : sqlite_lib
+)
 
 
 # 定义 aria2c 可执行文件
 executable('aria2c', 'aria2-src/src/aria2c.c',
-           include_directories : ['aria2-src/src', zlib_dir, libxml2_dir, cares_dir, openssl_dir, sqlite_dir], # 添加include_directories
-           dependencies : [zlib, libxml2, cares, openssl, sqlite],
+           include_directories : 'aria2-src/src',
+           dependencies : [zlib, libxml2, cares, sqlite],  # OpenSSL 已移除
            c_args : ['-mwindows'],
            link_args: ['-static', '-s'])
