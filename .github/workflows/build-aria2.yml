@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y meson ninja git wget
+        run: sudo add-apt-repository ppa:ninja-build/ninja-stable
+             sudo apt update
+             sudo apt install -y ninja-build meson git wget
       - name: Create dependencies directory
         run: mkdir -p dependencies
 
