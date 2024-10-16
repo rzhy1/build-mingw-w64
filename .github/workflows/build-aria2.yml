@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Build zlib
         run: |
+          sudo apt update
+          sudo apt install -y meson
           mkdir -p dependencies/zlib
           cd dependencies/zlib
           git clone --depth 1 https://github.com/madler/zlib.git .
