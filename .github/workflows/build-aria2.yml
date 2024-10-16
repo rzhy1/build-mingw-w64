@@ -8,7 +8,7 @@ on:
 
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Install dependencies
         run: |
@@ -24,7 +24,7 @@ jobs:
         run: mkdir -p dependencies
 
   build-dependencies:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: setup
     steps:
       - name: Build zlib
@@ -85,26 +85,6 @@ jobs:
           ninja -C build install
           if [ $? -ne 0 ]; then
             echo "Error: Ninja install failed for c-ares"
-            exit 1
-          fi
-      - name: Build OpenSSL
-        run: |
-          mkdir -p dependencies/openssl
-          cd dependencies/openssl
-          git clone --depth 1 https://github.com/openssl/openssl.git .
-          meson setup build --buildtype=release
-          if [ $? -ne 0 ]; then
-            echo "Error: Meson setup failed for OpenSSL"
-            exit 1
-          fi
-          ninja -C build
-          if [ $? -ne 0 ]; then
-            echo "Error: Ninja build failed for OpenSSL"
-            exit 1
-          fi
-          ninja -C build install
-          if [ $? -ne 0 ]; then
-            echo "Error: Ninja install failed for OpenSSL"
             exit 1
           fi
       - name: Build sqlite
