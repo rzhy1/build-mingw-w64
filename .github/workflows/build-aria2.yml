@@ -27,8 +27,9 @@ jobs:
           sudo apt install -y meson
           mkdir -p dependencies/zlib
           cd dependencies/zlib
-          git clone --depth 1 https://github.com/madler/zlib.git .
-          meson setup build
+          git clone --depth 1 https://github.com/madler/zlib.git zlib-source # 创建一个名为zlib-source的文件夹
+          cd zlib-source # 进入zlib源码目录
+          meson setup build # 在zlib-source目录下创建build目录
           if [ $? -ne 0 ]; then
             echo "Error: Meson setup failed for zlib"
             exit 1
@@ -43,6 +44,7 @@ jobs:
             echo "Error: Ninja install failed for zlib"
             exit 1
           fi
+          cp -r build/install/* ../ # 将构建好的文件复制到dependencies/zlib目录下
       - name: Build libxml2
         run: |
           mkdir -p dependencies/libxml2
