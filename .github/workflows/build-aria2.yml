@@ -12,12 +12,6 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo add-apt-repository ppa:ninja-build/ninja-stable
-          sudo apt update
-          if [ $? -ne 0 ]; then
-            echo "Error: apt update failed"
-            exit 1
-          fi
           sudo apt update
           sudo apt install -y ninja-build meson git wget
       - name: Create dependencies directory
