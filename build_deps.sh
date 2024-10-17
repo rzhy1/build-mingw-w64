@@ -26,7 +26,7 @@ build_dep() {
   local tmp_dir
 
   tmp_dir=$(mktemp -d)
-  echo "正在构建依赖库: $dep，从 $url 下载"
+  echo "Building dependency: $dep from $url"
 
   if [[ "$url" == *.git ]]; then
     git clone --depth 1 --progress "$url" "$tmp_dir" || exit 1
@@ -48,15 +48,15 @@ build_dep() {
   mv "$tmp_dir/$dep" "dependencies/$dep"
   rm -rf "$tmp_dir"
 
-  cd "$tmp_dir/$dep"  # 确保你位于正确的目录
+  cd "dependencies/$dep"  #This is where the fix is
   echo "正在运行 meson setup..."
-  meson setup build --cross-file=../cross_file.txt --backend=ninja "$options"
+  meson setup build --cross-file=../cross_file.txt --backend=ninja "$options" || exit 1
   echo "Meson setup 输出: $?"
   echo "正在运行 ninja..."
-  ninja -C build
+  ninja -C build || exit 1
   echo "Ninja 输出: $?"
   echo "正在运行 ninja install..."
-  ninja -C build install
+  ninja -C build install || exit 1
   echo "Ninja install 输出: $?"
   cd ..
 }
