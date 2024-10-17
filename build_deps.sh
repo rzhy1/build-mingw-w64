@@ -3,7 +3,7 @@
 export PREFIX="x86_64-w64-mingw32"
 export INSTALLDIR="dependencies"
 
-# Create cross-file.txt
+# 创建 cross_file.txt (保持不变)
 cat <<EOF > cross_file.txt
 [binaries]
 c = 'x86_64-w64-mingw32-gcc'
@@ -18,32 +18,38 @@ cpu = 'x86_64'
 endian = 'little'
 EOF
 
+
 build_dep() {
   local dep="$1"
   local url="$2"
   local options="$3"
   local tmp_dir
 
-  tmp_dir=$(mktemp -d)  # 创建临时目录
-
-  echo "正在构建依赖库: $dep"
+  tmp_dir=$(mktemp -d)
+  echo "正在构建依赖库: $dep，从 $url 下载"
 
   if [[ "$url" == *.git ]]; then
-    git clone --depth 1 "$url" "$tmp_dir"
+    git clone --depth 1 --progress "$url" "$tmp_dir" || exit 1  # 添加 --progress 以获得更好的反馈
   else
-    wget -O "$tmp_dir/$dep.tar.gz" "$url"
-    tar -xf "$tmp_dir/$dep.tar.gz" -C "$tmp_dir"
+    wget --progress=dot -O "$tmp_dir/$dep.tar.gz" "$url" || exit 1  # 添加 --progress=dot
+    tar -xf "$tmp_dir/$dep.tar.gz" -C "$tmp_dir" || exit 1
     rm "$tmp_dir/$dep.tar.gz"
   fi
 
-  mkdir -p "dependencies/$dep"  # 创建最终的依赖库目录
-  mv "$tmp_dir/*" "dependencies/$dep"  # 将内容移动到正确的位置
-  rm -rf "$tmp_dir"  # 删除临时目录
+  # 检查克隆/解压是否成功
+  if [[ ! -d "$tmp_dir/$dep" ]]; then
+      echo "错误: 克隆或解压 $dep 失败"
+      exit 1
+  fi
+
+  mkdir -p "dependencies/$dep"
+  mv "$tmp_dir/$dep" "dependencies/$dep"
+  rm -rf "$tmp_dir"
 
   cd "dependencies/$dep"
-  meson setup build --cross-file=../cross_file.txt --backend=ninja "$options"
-  ninja -C build
-  ninja -C build install
+  meson setup build --cross-file=../cross_file.txt --backend=ninja "$options" || exit 1
+  ninja -C build || exit 1
+  ninja -C build install || exit 1
   cd ..
 }
 
