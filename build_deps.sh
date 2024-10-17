@@ -2,7 +2,7 @@
 
 export PREFIX="x86_64-w64-mingw32"
 export INSTALLDIR="dependencies"
-sudo apt-get update && sudo apt-get install -y xz-utils
+
 # 创建 cross_file.txt (保持不变)
 cat <<EOF > cross_file.txt
 [binaries]
@@ -29,9 +29,9 @@ build_dep() {
   echo "正在构建依赖库: $dep，从 $url 下载"
 
   if [[ "$url" == *.git ]]; then
-    git clone --depth 1 --progress "$url" "$tmp_dir" || exit 1  # 添加 --progress 以获得更好的反馈
+    git clone --depth 1 --progress "$url" "$tmp_dir" || exit 1
   else
-    wget --progress=dot -O "$tmp_dir/$dep.tar.gz" "$url" || exit 1  # 添加 --progress=dot
+    wget --progress=dot -O "$tmp_dir/$dep.tar.gz" "$url" || exit 1
     tar -xf "$tmp_dir/$dep.tar.gz" -C "$tmp_dir" || exit 1
     rm "$tmp_dir/$dep.tar.gz"
   fi
@@ -47,12 +47,16 @@ build_dep() {
   rm -rf "$tmp_dir"
 
   cd "dependencies/$dep"
+
+  echo "正在将 $dep 解压到: $PWD"  # 添加的日志行
   meson setup build --cross-file=../cross_file.txt --backend=ninja "$options" || exit 1
   ninja -C build || exit 1
   ninja -C build install || exit 1
+  echo "$dep 解压完成"  # 添加的日志行
   cd ..
 }
 
+build_dep xz https://github.com/tukaani-project/xz/releases/download/v5.6.3/xz-5.6.3.tar.gz "--prefix=$INSTALLDIR --enable-static --disable-shared"
 build_dep zstd https://github.com/facebook/zstd.git "--prefix=$INSTALLDIR -Dbin_programs=true -Dstatic_runtime=true -Ddefault_library=static -Db_lto=true --optimization=2"
 build_dep "zlib-ng" https://github.com/zlib-ng/zlib-ng.git "--prefix=$INSTALLDIR --static --64 --zlib-compat"
 build_dep gmp https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.xz "--host=$PREFIX --disable-shared --prefix=$INSTALLDIR"
