@@ -32,7 +32,9 @@ build_dep() {
     git clone --depth 1 --progress "$url" "$tmp_dir" || exit 1
   else
     wget --progress=dot -O "$tmp_dir/$dep.tar.gz" "$url" || exit 1
+    echo "正在解压文件: $tmp_dir/$dep.tar.gz 到目录: $tmp_dir"
     tar -xf "$tmp_dir/$dep.tar.gz" -C "$tmp_dir" || exit 1
+    echo "解压结果: $?"
     rm "$tmp_dir/$dep.tar.gz"
   fi
 
