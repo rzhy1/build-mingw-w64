@@ -53,7 +53,7 @@ build_dep() {
   cd ..
 }
 
-build_dep xz https://github.com/tukaani-project/xz.git "--prefix=$INSTALLDIR --enable-static --disable-shared"
+build_dep xz https://github.com/tukaani-project/xz/releases/download/v5.6.3/xz-5.6.3.tar.gz "--prefix=$INSTALLDIR --enable-static --disable-shared"
 build_dep zstd https://github.com/facebook/zstd.git "--prefix=$INSTALLDIR -Dbin_programs=true -Dstatic_runtime=true -Ddefault_library=static -Db_lto=true --optimization=2"
 build_dep "zlib-ng" https://github.com/zlib-ng/zlib-ng.git "--prefix=$INSTALLDIR --static --64 --zlib-compat"
 build_dep gmp https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.xz "--host=$PREFIX --disable-shared --prefix=$INSTALLDIR"
