@@ -22,18 +22,25 @@ build_dep() {
   local dep="$1"
   local url="$2"
   local options="$3"
+  local tmp_dir
 
-  mkdir -p "dependencies/$dep"
-  cd "dependencies/$dep"
+  tmp_dir=$(mktemp -d)  # 创建临时目录
+
+  echo "正在构建依赖库: $dep"
 
   if [[ "$url" == *.git ]]; then
-    git clone --depth 1 "$url" .
+    git clone --depth 1 "$url" "$tmp_dir"
   else
-    wget -O "$dep.tar.gz" "$url"
-    tar -xf "$dep.tar.gz"
-    rm "$dep.tar.gz"
+    wget -O "$tmp_dir/$dep.tar.gz" "$url"
+    tar -xf "$tmp_dir/$dep.tar.gz" -C "$tmp_dir"
+    rm "$tmp_dir/$dep.tar.gz"
   fi
 
+  mkdir -p "dependencies/$dep"  # 创建最终的依赖库目录
+  mv "$tmp_dir/*" "dependencies/$dep"  # 将内容移动到正确的位置
+  rm -rf "$tmp_dir"  # 删除临时目录
+
+  cd "dependencies/$dep"
   meson setup build --cross-file=../cross_file.txt --backend=ninja "$options"
   ninja -C build
   ninja -C build install
