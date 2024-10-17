@@ -48,13 +48,16 @@ build_dep() {
   mv "$tmp_dir/$dep" "dependencies/$dep"
   rm -rf "$tmp_dir"
 
-  cd "dependencies/$dep"
-
-  echo "正在将 $dep 解压到: $PWD"  # 添加的日志行
-  meson setup build --cross-file=../cross_file.txt --backend=ninja "$options" || exit 1
-  ninja -C build || exit 1
-  ninja -C build install || exit 1
-  echo "$dep 解压完成"  # 添加的日志行
+  cd "$tmp_dir/$dep"  # 确保你位于正确的目录
+  echo "正在运行 meson setup..."
+  meson setup build --cross-file=../cross_file.txt --backend=ninja "$options"
+  echo "Meson setup 输出: $?"
+  echo "正在运行 ninja..."
+  ninja -C build
+  echo "Ninja 输出: $?"
+  echo "正在运行 ninja install..."
+  ninja -C build install
+  echo "Ninja install 输出: $?"
   cd ..
 }
 
