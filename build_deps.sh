@@ -28,51 +28,38 @@ build_dep() {
   tmp_dir=$(mktemp -d)
   echo "正在构建依赖: $dep 来自 $url"
 
-  if [[ "$url" == *.git ]]; then
-    git clone --depth 1 --progress "$url" "$tmp_dir" || exit 1
-  else
-    wget --progress=dot -O "$tmp_dir/$dep.tar.gz" "$url" || exit 1
-    echo "正在解压文件: $tmp_dir/$dep.tar.gz 到目录: $tmp_dir"
-    
-    # 检查下载文件是否存在
-    if [[ ! -f "$tmp_dir/$dep.tar.gz" ]]; then
-        echo "下载文件不存在: $tmp_dir/$dep.tar.gz"
-        exit 1
-    fi
+  # 下载和解压依赖
+  wget --progress=dot -O "$tmp_dir/$dep.tar.gz" "$url" || exit 1
+  echo "正在解压文件: $tmp_dir/$dep.tar.gz 到目录: $tmp_dir"
+  tar -xf "$tmp_dir/$dep.tar.gz" -C "$tmp_dir" || exit 1
+  echo "解压结果: $? 目录内容: $(ls $tmp_dir)"
+  rm "$tmp_dir/$dep.tar.gz"
 
-    tar -xf "$tmp_dir/$dep.tar.gz" -C "$tmp_dir" || exit 1
-    echo "解压结果: $? 目录内容: $(ls $tmp_dir)"
-    rm "$tmp_dir/$dep.tar.gz"
+  if [[ ! -d "$tmp_dir/$dep" ]]; then
+    echo "错误: 克隆或解压 $dep 失败"
+    exit 1
   fi
 
-  # 检查解压后的目录
-  if [[ ! -d "$tmp_dir/xz-5.6.3" ]]; then
-      echo "错误: 克隆或解压 $dep 失败"
-      exit 1
-  fi
-
+  # 移动源代码到 dependencies 目录下
   mkdir -p "dependencies/$dep"
-  mv "$tmp_dir/xz-5.6.3" "dependencies/$dep"
+  mv "$tmp_dir/$dep"/* "dependencies/$dep/"
   rm -rf "$tmp_dir"
 
-  # 构建目录改为在 dependencies/build/$dep
-  mkdir -p "dependencies/build/$dep"
-  
-  # 进入依赖的解压目录
+  # 进入依赖目录
   cd "dependencies/$dep"
 
-  echo "正在运行 meson setup..."
-  # 设置正确的构建目录 ../../build/$dep，源目录为当前目录（此时为 dependencies/$dep 即解压目录）
-  meson setup "../../build/$dep" . --cross-file=../cross_file.txt --backend=ninja "$options" || exit 1
-  echo "Meson setup 输出: $? 目录内容: $(ls ../../build/$dep)"
-  
-  echo "正在运行 ninja..."
-  ninja -C "../../build/$dep" || exit 1
-  echo "Ninja 输出: $? 目录内容: $(ls ../../build/$dep)"
-  
-  echo "正在运行 ninja install..."
-  ninja -C "../../build/$dep" install || exit 1
-  echo "Ninja install 输出: $? 目录内容: $(ls ..)"
+  # 如果没有 meson.build，运行 ./configure
+  if [[ ! -f "meson.build" ]]; then
+    echo "未找到 meson.build，正在使用 ./configure 构建"
+    ./configure --host=$PREFIX --prefix=$INSTALLDIR --enable-static --disable-shared || exit 1
+    make || exit 1
+    make install || exit 1
+  else
+    echo "正在运行 meson setup..."
+    meson setup "../../build/$dep" . --cross-file=../cross_file.txt --backend=ninja "$options" || exit 1
+    ninja -C "../../build/$dep" || exit 1
+    ninja -C "../../build/$dep" install || exit 1
+  fi
   cd ..
 }
 
