@@ -1,5 +1,4 @@
 bash
-复制代码
 #!/bin/bash -e
 
 export PREFIX="x86_64-w64-mingw32"
