@@ -57,10 +57,12 @@ build_dep() {
 
   # 构建目录改为在 dependencies/build/$dep
   mkdir -p "dependencies/build/$dep"
+  
+  # 进入依赖的解压目录
   cd "dependencies/$dep"
 
   echo "正在运行 meson setup..."
-  # 设置正确的源目录和构建目录
+  # 设置正确的构建目录 ../../build/$dep，源目录为当前目录（此时为 dependencies/$dep 即解压目录）
   meson setup "../../build/$dep" . --cross-file=../cross_file.txt --backend=ninja "$options" || exit 1
   echo "Meson setup 输出: $? 目录内容: $(ls ../../build/$dep)"
   
@@ -73,6 +75,7 @@ build_dep() {
   echo "Ninja install 输出: $? 目录内容: $(ls ..)"
   cd ..
 }
+
 
 build_dep xz https://github.com/tukaani-project/xz/releases/download/v5.6.3/xz-5.6.3.tar.gz "--prefix=$INSTALLDIR --enable-static --disable-shared"
 build_dep zstd https://github.com/facebook/zstd.git "--prefix=$INSTALLDIR -Dbin_programs=true -Dstatic_runtime=true -Ddefault_library=static -Db_lto=true --optimization=2"
