@@ -45,7 +45,7 @@ build_dep() {
     rm "$tmp_dir/$dep.tar.gz"
   fi
 
-  # 检查解压后的目录（具体目录名可能需要根据依赖调整）
+  # 检查解压后的目录
   if [[ ! -d "$tmp_dir/xz-5.6.3" ]]; then
       echo "错误: 克隆或解压 $dep 失败"
       exit 1
@@ -55,18 +55,24 @@ build_dep() {
   mv "$tmp_dir/xz-5.6.3" "dependencies/$dep"
   rm -rf "$tmp_dir"
 
+  # 构建目录改为在 dependencies/build/$dep
+  mkdir -p "dependencies/build/$dep"
   cd "dependencies/$dep"
+
   echo "正在运行 meson setup..."
-  meson setup build --cross-file=../cross_file.txt --backend=ninja "$options" || exit 1
-  echo "Meson setup 输出: $? 目录内容: $(ls build)"
+  meson setup "../build/$dep" --cross-file=../cross_file.txt --backend=ninja "$options" || exit 1
+  echo "Meson setup 输出: $? 目录内容: $(ls ../build/$dep)"
+  
   echo "正在运行 ninja..."
-  ninja -C build || exit 1
-  echo "Ninja 输出: $? 目录内容: $(ls build)"
+  ninja -C "../build/$dep" || exit 1
+  echo "Ninja 输出: $? 目录内容: $(ls ../build/$dep)"
+  
   echo "正在运行 ninja install..."
-  ninja -C build install || exit 1
+  ninja -C "../build/$dep" install || exit 1
   echo "Ninja install 输出: $? 目录内容: $(ls ..)"
   cd ..
 }
+主要改动
 
 build_dep xz https://github.com/tukaani-project/xz/releases/download/v5.6.3/xz-5.6.3.tar.gz "--prefix=$INSTALLDIR --enable-static --disable-shared"
 build_dep zstd https://github.com/facebook/zstd.git "--prefix=$INSTALLDIR -Dbin_programs=true -Dstatic_runtime=true -Ddefault_library=static -Db_lto=true --optimization=2"
