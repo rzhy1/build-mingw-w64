@@ -3,7 +3,7 @@ bash
 #!/bin/bash -e
 
 export PREFIX="x86_64-w64-mingw32"
-export INSTALLDIR="dependencies"
+export INSTALLDIR="$(pwd)/dependencies"
 
 build_dep() {
   local dep="$1"
