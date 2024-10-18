@@ -1,23 +1,9 @@
+bash
+复制代码
 #!/bin/bash -e
 
 export PREFIX="x86_64-w64-mingw32"
 export INSTALLDIR="dependencies"
-
-# 创建 cross_file.txt (保持不变)
-cat <<EOF > cross_file.txt
-[binaries]
-c = 'x86_64-w64-mingw32-gcc'
-cpp = 'x86_64-w64-mingw32-g++'
-ar = 'x86_64-w64-mingw32-ar'
-strip = 'x86_64-w64-mingw32-strip'
-exe_wrapper = 'wine64'
-[host_machine]
-system = 'windows'
-cpu_family = 'x86_64'
-cpu = 'x86_64'
-endian = 'little'
-EOF
-
 
 build_dep() {
   local dep="$1"
@@ -33,16 +19,19 @@ build_dep() {
   echo "正在解压文件: $tmp_dir/$dep.tar.gz 到目录: $tmp_dir"
   tar -xf "$tmp_dir/$dep.tar.gz" -C "$tmp_dir" || exit 1
   echo "解压结果: $? 目录内容: $(ls $tmp_dir)"
-  rm "$tmp_dir/$dep.tar.gz"
 
-  if [[ ! -d "$tmp_dir/$dep" ]]; then
+  # 查找解压后的文件夹名
+  local extracted_dir=$(find "$tmp_dir" -mindepth 1 -maxdepth 1 -type d | head -n 1)
+
+  # 检查是否成功解压并找到文件夹
+  if [[ ! -d "$extracted_dir" ]]; then
     echo "错误: 克隆或解压 $dep 失败"
     exit 1
   fi
 
   # 移动源代码到 dependencies 目录下
   mkdir -p "dependencies/$dep"
-  mv "$tmp_dir/$dep"/* "dependencies/$dep/"
+  mv "$extracted_dir"/* "dependencies/$dep/"
   rm -rf "$tmp_dir"
 
   # 进入依赖目录
@@ -62,7 +51,6 @@ build_dep() {
   fi
   cd ..
 }
-
 
 build_dep xz https://github.com/tukaani-project/xz/releases/download/v5.6.3/xz-5.6.3.tar.gz "--prefix=$INSTALLDIR --enable-static --disable-shared"
 build_dep zstd https://github.com/facebook/zstd.git "--prefix=$INSTALLDIR -Dbin_programs=true -Dstatic_runtime=true -Ddefault_library=static -Db_lto=true --optimization=2"
