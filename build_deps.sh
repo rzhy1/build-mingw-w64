@@ -26,38 +26,45 @@ build_dep() {
   local tmp_dir
 
   tmp_dir=$(mktemp -d)
-  echo "Building dependency: $dep from $url"
+  echo "正在构建依赖: $dep 来自 $url"
 
   if [[ "$url" == *.git ]]; then
     git clone --depth 1 --progress "$url" "$tmp_dir" || exit 1
   else
     wget --progress=dot -O "$tmp_dir/$dep.tar.gz" "$url" || exit 1
     echo "正在解压文件: $tmp_dir/$dep.tar.gz 到目录: $tmp_dir"
+    
+    # 检查下载文件是否存在
+    if [[ ! -f "$tmp_dir/$dep.tar.gz" ]]; then
+        echo "下载文件不存在: $tmp_dir/$dep.tar.gz"
+        exit 1
+    fi
+
     tar -xf "$tmp_dir/$dep.tar.gz" -C "$tmp_dir" || exit 1
-    echo "解压结果: $?"
+    echo "解压结果: $? 目录内容: $(ls $tmp_dir)"
     rm "$tmp_dir/$dep.tar.gz"
   fi
 
-  # 检查克隆/解压是否成功
-  if [[ ! -d "$tmp_dir/$dep" ]]; then
+  # 检查解压后的目录（具体目录名可能需要根据依赖调整）
+  if [[ ! -d "$tmp_dir/xz-5.6.3" ]]; then
       echo "错误: 克隆或解压 $dep 失败"
       exit 1
   fi
 
   mkdir -p "dependencies/$dep"
-  mv "$tmp_dir/$dep" "dependencies/$dep"
+  mv "$tmp_dir/xz-5.6.3" "dependencies/$dep"
   rm -rf "$tmp_dir"
 
-  cd "dependencies/$dep"  #This is where the fix is
+  cd "dependencies/$dep"
   echo "正在运行 meson setup..."
   meson setup build --cross-file=../cross_file.txt --backend=ninja "$options" || exit 1
-  echo "Meson setup 输出: $?"
+  echo "Meson setup 输出: $? 目录内容: $(ls build)"
   echo "正在运行 ninja..."
   ninja -C build || exit 1
-  echo "Ninja 输出: $?"
+  echo "Ninja 输出: $? 目录内容: $(ls build)"
   echo "正在运行 ninja install..."
   ninja -C build install || exit 1
-  echo "Ninja install 输出: $?"
+  echo "Ninja install 输出: $? 目录内容: $(ls ..)"
   cd ..
 }
 
