@@ -46,3 +46,10 @@ jobs:
       with:
         name: mingw-w64-x86_64-toolchain
         path: ${{ github.workspace }}/mingw-w64/x86_64
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: mingw-w64
+        allowUpdates: true
+        artifacts: "mingw-w64-x86_64-toolchain.zip"
+        token: ${{ secrets.GITHUB_TOKEN }}
