@@ -26,9 +26,9 @@ jobs:
         path: |
           ${{ github.workspace }}/mingw-w64/src
           ${{ github.workspace }}/mingw-w64/bld
-        key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/build_mingw_w64.sh') }}
+        key: Linux-mingw-w64-${{ runner.os }}-${{ hashFiles('**/build_mingw_w64.sh') }}
         restore-keys: |
-          ${{ runner.os }}-mingw-w64-
+          Linux-mingw-w64-${{ runner.os }}-
 
     - name: Run build script
       env:
