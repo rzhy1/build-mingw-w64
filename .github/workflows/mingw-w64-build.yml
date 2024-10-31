@@ -38,7 +38,7 @@ jobs:
         GCC_BRANCH: "releases/gcc-14"
       run: |
         chmod +x ./build_mingw_w64.sh
-        ./build_mingw_w64.sh x86_64
+        ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh x86_64
 
     - name: Archive build artifacts
       if: success()
