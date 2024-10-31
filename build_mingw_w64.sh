@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-ROOT_PATH="${{ github.workspace }}/mingw-w64"
+#ROOT_PATH="${{ github.workspace }}/mingw-w64"
 
 MINGW_W64_BRANCH="master"
 BINUTILS_BRANCH="binutils-2_42-branch"
