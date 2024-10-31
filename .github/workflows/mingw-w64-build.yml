@@ -51,6 +51,9 @@ jobs:
       run: |
         cd ${{ github.workspace }}/mingw-w64/x86_64
         zip -r mingw-w64-x86_64-toolchain.zip *
+        echo "Contents of directory after zipping:"
+        ls -l
+        echo "ZIP file created at: $(pwd)/mingw-w64-x86_64-toolchain.zip"
 
     - name: Create Release
       uses: ncipollo/release-action@v1
