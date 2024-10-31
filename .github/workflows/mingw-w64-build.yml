@@ -22,13 +22,12 @@ jobs:
 
     - name: Run build script
       env:
-        # 设置工作路径，或者根据你的需求进行更改
         ROOT_PATH: ${{ github.workspace }}/mingw-w64
         MINGW_W64_BRANCH: "master"
         BINUTILS_BRANCH: "binutils-2_42-branch"
         GCC_BRANCH: "releases/gcc-14"
       run: |
-        chmod +x ./build_mingw_w64.sh  # 如果脚本名称为 build_mingw_w64.sh
+        chmod +x ./build_mingw_w64.sh
         ./build_mingw_w64.sh x86_64
 
     - name: Archive build artifacts
