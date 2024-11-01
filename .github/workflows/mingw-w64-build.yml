@@ -40,17 +40,18 @@ jobs:
         chmod +x ./build_mingw_w64.sh
         ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh x86_64
 
-    - name: Archive build artifacts
-      if: success()
-      uses: actions/upload-artifact@v4
-      with:
-        name: mingw-w64-x86_64-toolchain
-        path: ${{ github.workspace }}/mingw-w64/x86_64
-    #- name: zip
+    #- name: Archive build artifacts
     #  if: success()
-    #  run: |
-    #    cd ${{ github.workspace }}/mingw-w64/x86_64
-    #    zip -r mingw-w64-x86_64-toolchain.zip *
+    #  uses: actions/upload-artifact@v4
+    #  with:
+    #    name: mingw-w64-x86_64-toolchain
+    #    path: ${{ github.workspace }}/mingw-w64/x86_64
+    
+    - name: zip
+      if: success()
+      run: |
+        cd ${{ github.workspace }}/mingw-w64/x86_64
+        zip -r mingw-w64-x86_64-toolchain.zip *
 
     - name: Create Release
       uses: ncipollo/release-action@v1
