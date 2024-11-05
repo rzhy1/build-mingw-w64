@@ -141,11 +141,6 @@ download_sources()
     execute "downloading config.guess" "" \
         curl -o config.guess \
             "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
-      
-    execute "downloading LLVM source" "" \
-        git clone --depth 1 -b "main" \
-            https://github.com/llvm/llvm-project.git llvm-project
-
 }
 
 build()
@@ -248,19 +243,6 @@ build()
         make -j $JOB_COUNT
     execute "($arch): installing GCC" "" \
         make install
-        
-    create_dir "$bld_path/llvm"
-    change_dir "$bld_path/llvm"
-
-    execute "($arch): configuring LLVM and LLD" "" \
-    cmake -G "Ninja" -DLLVM_ENABLE_PROJECTS="lld" \
-        -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="X86" \
-        -DCMAKE_INSTALL_PREFIX="$prefix" "$SRC_PATH/llvm-project/llvm"
-
-    execute "($arch): building LLD" "" \
-        ninja -t targets | grep lld | awk '{print $1}' | xargs ninja
-    execute "($arch): installing LLD" "" \
-        ninja install
 }
 
 while :; do
