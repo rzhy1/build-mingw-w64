@@ -253,15 +253,14 @@ build()
     change_dir "$bld_path/llvm"
 
     execute "($arch): configuring LLVM and LLD" "" \
-    cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld" \
+    cmake -G "Ninja" -DLLVM_ENABLE_PROJECTS="lld" \
         -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="X86" \
         -DCMAKE_INSTALL_PREFIX="$prefix" "$SRC_PATH/llvm-project/llvm"
 
     execute "($arch): building LLD" "" \
-        make -j $JOB_COUNT
-
+        ninja -t targets | grep lld | awk '{print $1}' | xargs ninja
     execute "($arch): installing LLD" "" \
-        make install
+        ninja install
 }
 
 while :; do
