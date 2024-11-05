@@ -19,8 +19,9 @@
 #ROOT_PATH="${{ github.workspace }}/mingw-w64"
 
 MINGW_W64_BRANCH="master"
-BINUTILS_BRANCH="binutils-2_42-branch"
-GCC_BRANCH="releases/gcc-14"
+BINUTILS_BRANCH="binutils-2_43-branch"
+GCC_BRANCH="trunk"
+#GCC_BRANCH="releases/gcc-14"
 
 ENABLE_THREADS="--enable-threads=posix"
 
@@ -140,7 +141,10 @@ download_sources()
     execute "downloading config.guess" "" \
         curl -o config.guess \
             "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
-   
+      
+    execute "downloading LLVM source" "" \
+        git clone --depth 1 -b "main" \
+            https://github.com/llvm/llvm-project.git llvm-project
 
 }
 
@@ -243,6 +247,20 @@ build()
     execute "($arch): building GCC" "" \
         make -j $JOB_COUNT
     execute "($arch): installing GCC" "" \
+        make install
+        
+    create_dir "$bld_path/llvm"
+    change_dir "$bld_path/llvm"
+
+    execute "($arch): configuring LLVM and LLD" "" \
+    cmake -G "Unix Makefiles" -DLLVM_ENABLE_PROJECTS="lld" \
+        -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="X86" \
+        -DCMAKE_INSTALL_PREFIX="$prefix" "$SRC_PATH/llvm-project/llvm"
+
+    execute "($arch): building LLD" "" \
+        make -j $JOB_COUNT
+
+    execute "($arch): installing LLD" "" \
         make install
 }
 
