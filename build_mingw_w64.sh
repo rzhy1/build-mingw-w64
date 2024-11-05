@@ -127,7 +127,7 @@ download_sources()
 
     execute "downloading MinGW-w64 source" "" \
         git clone --depth 1 -b "$MINGW_W64_BRANCH" \
-            https://git.code.sf.net/p/mingw-w64/mingw-w64 mingw-w64
+            https://github.com/mirror/mingw-w64.git mingw-w64
 
     execute "downloading Binutils source" "" \
         git clone --depth 1 -b "$BINUTILS_BRANCH" \
@@ -140,6 +140,8 @@ download_sources()
     execute "downloading config.guess" "" \
         curl -o config.guess \
             "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
+   
+
 }
 
 build()
