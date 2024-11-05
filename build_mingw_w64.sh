@@ -415,20 +415,19 @@ fi
 TOTAL_STEPS=0
 
 if [ ! "$CACHED_SOURCES" ]; then
-    TOTAL_STEPS=$((TOTAL_STEPS + 5)) 
+    TOTAL_STEPS=$((TOTAL_STEPS + 5))
 fi
 
 if [ "$ENABLE_THREADS" ]; then
-    THREADS_STEPS=3  # 启用线程时的步骤
+    THREADS_STEPS=3
 else
     THREADS_STEPS=0
 fi
 
-BUILD_STEPS=7
-
 THREADS_STEPS=$((THREADS_STEPS * NUM_BUILDS))
+BUILD_STEPS=$((13 * NUM_BUILDS))
 
-TOTAL_STEPS=$((TOTAL_STEPS + THREADS_STEPS + BUILD_STEPS * NUM_BUILDS))
+TOTAL_STEPS=$((TOTAL_STEPS + THREADS_STEPS + BUILD_STEPS))
 
 if [ "$ROOT_PATH_ARG" ]; then
     ROOT_PATH=$(mkdir -p "$ROOT_PATH_ARG" && cd "$ROOT_PATH_ARG" && pwd)
@@ -463,7 +462,6 @@ else
         arg_error "no sources found, run with --keep-artifacts first"
     fi
 fi
-
 
 BUILD=$(sh "$SRC_PATH/config.guess")
 
