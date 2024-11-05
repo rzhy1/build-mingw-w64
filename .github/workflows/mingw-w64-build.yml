@@ -20,7 +20,7 @@ jobs:
     - name: Set up dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils
+        sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build
         
     - name: Cache build dependencies
       uses: actions/cache@v4
