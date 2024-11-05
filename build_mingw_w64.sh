@@ -415,19 +415,23 @@ fi
 TOTAL_STEPS=0
 
 if [ ! "$CACHED_SOURCES" ]; then
-    TOTAL_STEPS=$((TOTAL_STEPS + 4))
+    TOTAL_STEPS=$((TOTAL_STEPS + 4))  # 用于下载源代码的步骤
 fi
 
 if [ "$ENABLE_THREADS" ]; then
-    THREADS_STEPS=3
+    THREADS_STEPS=3  # 启用线程时的步骤
 else
     THREADS_STEPS=0
 fi
 
-THREADS_STEPS=$((THREADS_STEPS * NUM_BUILDS))
-BUILD_STEPS=$((13 * NUM_BUILDS))
+# 每个架构的构建步骤，固定为 13 步
+BUILD_STEPS=13
 
-TOTAL_STEPS=$((TOTAL_STEPS + THREADS_STEPS + BUILD_STEPS))
+# 加入线程相关的步骤
+THREADS_STEPS=$((THREADS_STEPS * NUM_BUILDS))
+
+# 确保根据架构数来调整总的构建步骤数
+TOTAL_STEPS=$((TOTAL_STEPS + THREADS_STEPS + BUILD_STEPS * NUM_BUILDS))
 
 if [ "$ROOT_PATH_ARG" ]; then
     ROOT_PATH=$(mkdir -p "$ROOT_PATH_ARG" && cd "$ROOT_PATH_ARG" && pwd)
