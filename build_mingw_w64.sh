@@ -20,8 +20,8 @@
 
 MINGW_W64_BRANCH="master"
 BINUTILS_BRANCH="binutils-2_43-branch"
-GCC_BRANCH="trunk"
-#GCC_BRANCH="releases/gcc-14"
+#GCC_BRANCH="trunk"
+GCC_BRANCH="releases/gcc-13"
 
 ENABLE_THREADS="--enable-threads=posix"
 
@@ -396,7 +396,7 @@ fi
 TOTAL_STEPS=0
 
 if [ ! "$CACHED_SOURCES" ]; then
-    TOTAL_STEPS=$((TOTAL_STEPS + 5))
+    TOTAL_STEPS=$((TOTAL_STEPS + 4))
 fi
 
 if [ "$ENABLE_THREADS" ]; then
@@ -406,7 +406,7 @@ else
 fi
 
 THREADS_STEPS=$((THREADS_STEPS * NUM_BUILDS))
-BUILD_STEPS=$((16 * NUM_BUILDS))
+BUILD_STEPS=$((13 * NUM_BUILDS))
 
 TOTAL_STEPS=$((TOTAL_STEPS + THREADS_STEPS + BUILD_STEPS))
 
