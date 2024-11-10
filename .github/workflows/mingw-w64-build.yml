@@ -21,16 +21,21 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build
+
+    - name: Set up ccache
+      run: |
+         export CCACHE_DIR="$HOME/.ccache"
+         export PATH="/usr/lib/ccache:$PATH"
+         ccache --max-size=2G
         
     - name: Cache build dependencies
       uses: actions/cache@v4
       with:
-        path: |
-          ${{ github.workspace }}/mingw-w64/x86_64/src
-          ${{ github.workspace }}/mingw-w64/x86_64/bld
-        key: Linux-mingw-w64-${{ runner.os }}-${{ hashFiles('**/build_mingw_w64.sh') }}
-        restore-keys: |
-          Linux-mingw-w64-${{ runner.os }}-
+          path: ~/.ccache
+          key: ccache-${{ runner.os }}-${{ hashFiles('**/Makefile', '**/*.c', '**/*.h') }}
+          restore-keys: |
+            ccache-${{ runner.os }}-
+            ccache-
 
     - name: Run build script
       env:
