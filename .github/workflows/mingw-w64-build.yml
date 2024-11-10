@@ -26,11 +26,12 @@ jobs:
       uses: actions/cache@v4
       with:
         path: |
-          ${{ github.workspace }}/mingw-w64/src
-          ${{ github.workspace }}/mingw-w64/bld
+          ${{ github.workspace }}/mingw-w64/x86_64/src
+          ${{ github.workspace }}/mingw-w64/x86_64/bld
         key: Linux-mingw-w64-${{ runner.os }}-${{ hashFiles('**/build_mingw_w64.sh') }}
         restore-keys: |
           Linux-mingw-w64-${{ runner.os }}-
+        save-always: true
 
     - name: Run build script
       env:
@@ -38,13 +39,6 @@ jobs:
       run: |
         chmod +x ./build_mingw_w64.sh
         ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh x86_64
-
-    #- name: Archive build artifacts
-    #  if: success()
-    #  uses: actions/upload-artifact@v4
-    #  with:
-    #    name: mingw-w64-x86_64-toolchain
-    #    path: ${{ github.workspace }}/mingw-w64/x86_64
     
     - name: zip
       if: success()
