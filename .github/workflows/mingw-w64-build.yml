@@ -31,7 +31,6 @@ jobs:
         key: Linux-mingw-w64-${{ runner.os }}-${{ hashFiles('**/build_mingw_w64.sh') }}
         restore-keys: |
           Linux-mingw-w64-${{ runner.os }}-
-        save-always: true
 
     - name: Run build script
       env:
