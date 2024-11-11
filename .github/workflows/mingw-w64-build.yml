@@ -35,7 +35,7 @@ jobs:
             ~/.ccache
             mingw-w64/src
             mingw-w64/bld
-            key: ccache-${{ runner.os }}-${{ hashFiles('**/Makefile', '**/*.c', '**/*.h', '**/*.sh') }}
+          key: ccache-${{ runner.os }}-${{ hashFiles('**/Makefile', '**/*.c', '**/*.h', '**/*.sh') }}
           restore-keys: |
             ccache-${{ runner.os }}-
             ccache-
