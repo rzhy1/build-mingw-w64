@@ -31,11 +31,13 @@ jobs:
     - name: Cache build dependencies
       uses: actions/cache@v4
       with:
-          path: ~/.ccache
-          key: ccache-${{ runner.os }}-${{ hashFiles('**/Makefile', '**/*.c', '**/*.h') }}
-          restore-keys: |
+          path: |
+            ~/.ccache
+            mingw-w64/src
+            mingw-w64/bld
+            key: ccache-${{ runner.os }}-${{ hashFiles('**/Makefile', '**/*.c', '**/*.h', '**/*.sh') }}
+            restore-keys: |
             ccache-${{ runner.os }}-
-            ccache-
 
     - name: Run build script
       env:
