@@ -36,8 +36,9 @@ jobs:
             mingw-w64/src
             mingw-w64/bld
             key: ccache-${{ runner.os }}-${{ hashFiles('**/Makefile', '**/*.c', '**/*.h', '**/*.sh') }}
-            restore-keys: |
+          restore-keys: |
             ccache-${{ runner.os }}-
+            ccache-
 
     - name: Run build script
       env:
