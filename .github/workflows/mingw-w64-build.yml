@@ -36,10 +36,12 @@ jobs:
       with:
         path: |
           ~/.ccache
-        key: ccache-${{ runner.os }}-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
+          ${{ github.workspace }}/mingw-w64/src
+          ${{ github.workspace }}/mingw-w64/bld
+        key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
         restore-keys: |
-          ccache-${{ runner.os }}-
-          ccache-
+          ${{ runner.os }}-mingw-w64-
+          ${{ runner.os }}-
 
 
     - name: Run build script
