@@ -17,6 +17,12 @@
 #
 
 #ROOT_PATH="${{ github.workspace }}/mingw-w64"
+# 设置 ccache 环境
+export PATH="/usr/lib/ccache:$PATH"
+export CCACHE_DIR="$HOME/.ccache"
+
+ccache -s
+echo "Using ccache directory: $CCACHE_DIR"
 
 MINGW_W64_BRANCH="master"
 BINUTILS_BRANCH="binutils-2_43-branch"
