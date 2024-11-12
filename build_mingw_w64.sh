@@ -22,7 +22,6 @@ export PATH="/usr/lib/ccache:$PATH"
 export CCACHE_DIR="$HOME/.ccache"
 
 ccache -s -v
-ccache -d
 echo "Using ccache directory: $CCACHE_DIR"
 
 MINGW_W64_BRANCH="master"
