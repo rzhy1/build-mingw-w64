@@ -24,21 +24,27 @@ jobs:
 
     - name: Set up ccache
       run: |
-         export CCACHE_DIR="$HOME/.ccache"
-         export PATH="/usr/lib/ccache:$PATH"
-         ccache --max-size=2G
-        
+        export CCACHE_DIR="$HOME/.ccache"
+        export PATH="/usr/lib/ccache:$PATH"
+        ccache --max-size=2G
+        # 验证 ccache 是否正常工作
+        ccache -s
+        echo "CCACHE_DIR: $CCACHE_DIR"
+    - name: List mingw-w64 directory
+      run: ls -R ${{ github.workspace }}/mingw-w64
+  
     - name: Cache build dependencies
       uses: actions/cache@v4
       with:
-          path: |
-            ~/.ccache
-            /mingw-w64/src
-            /mingw-w64/bld
-          key: ccache-${{ runner.os }}-${{ hashFiles('**/Makefile', '**/*.c', '**/*.h', '**/*.sh') }}
-          restore-keys: |
-            ccache-${{ runner.os }}-
-            ccache-
+        path: |
+          ~/.ccache
+          ${{ github.workspace }}/mingw-w64/src
+          ${{ github.workspace }}/mingw-w64/bld
+        key: ccache-${{ runner.os }}-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
+        restore-keys: |
+          ccache-${{ runner.os }}-
+          ccache-
+
 
     - name: Run build script
       env:
