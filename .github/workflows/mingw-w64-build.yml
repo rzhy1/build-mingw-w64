@@ -12,7 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
-
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      PATH: "/usr/lib/ccache:${{ env.PATH }}"
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -24,8 +26,6 @@ jobs:
 
     - name: Set up ccache
       run: |
-        export CCACHE_DIR="$HOME/.ccache"
-        export PATH="/usr/lib/ccache:$PATH"
         ccache --max-size=2G
         # 验证 ccache 是否正常工作
         ccache -s
@@ -36,8 +36,6 @@ jobs:
       with:
         path: |
           ~/.ccache
-          ${{ github.workspace }}/mingw-w64/src
-          ${{ github.workspace }}/mingw-w64/bld
         key: ccache-${{ runner.os }}-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
         restore-keys: |
           ccache-${{ runner.os }}-
