@@ -20,7 +20,10 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build ccache
-
+        
+    - name: Fix ccache directory permissions
+      run: chmod -R 777 ~/.ccache
+      
     - name: Set up ccache
       run: |
         export PATH="/usr/lib/ccache:$PATH"
@@ -40,7 +43,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-mingw-w64-
           ${{ runner.os }}-
-
 
     - name: Run build script
       env:
