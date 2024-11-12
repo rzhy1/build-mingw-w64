@@ -12,9 +12,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    env:
-      CCACHE_DIR: ${{ github.workspace }}/.ccache
-      PATH: "/usr/lib/ccache:${{ env.PATH }}"
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -26,6 +23,8 @@ jobs:
 
     - name: Set up ccache
       run: |
+        export PATH="/usr/lib/ccache:$PATH"
+        export CCACHE_DIR="$HOME/.ccache"
         ccache --max-size=2G
         # 验证 ccache 是否正常工作
         ccache -s
