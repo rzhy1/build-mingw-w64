@@ -22,8 +22,8 @@ export PATH="/usr/lib/ccache:$PATH"
 export CCACHE_DIR="$HOME/.ccache"
 export CCACHE_NOHASHDIR=true
 export CCACHE_SLOPPINESS="file_macro,include_file_ctime,include_file_mtime,time_macros"
-export CC="ccache gcc"
-export CXX="ccache g++"
+#export CC="ccache gcc"
+#export CXX="ccache g++"
 ccache -s -v
 echo "Using ccache directory: $CCACHE_DIR"
 
