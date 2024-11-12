@@ -20,6 +20,7 @@
 # 设置 ccache 环境
 export PATH="/usr/lib/ccache:$PATH"
 export CCACHE_DIR="$HOME/.ccache"
+export CCACHE_NOHASHDIR=true
 
 ccache -s -v
 echo "Using ccache directory: $CCACHE_DIR"
