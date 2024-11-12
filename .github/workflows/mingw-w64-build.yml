@@ -25,6 +25,7 @@ jobs:
       run: |
         export PATH="/usr/lib/ccache:$PATH"
         export CCACHE_DIR="$HOME/.ccache"
+        export CCACHE_NOHASHDIR=true
         ccache --max-size=2G
         # 验证 ccache 是否正常工作
         ccache -s
