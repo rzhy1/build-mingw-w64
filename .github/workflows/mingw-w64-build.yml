@@ -40,7 +40,6 @@ jobs:
         export CCACHE_SLOPPINESS="file_macro,include_file_ctime,include_file_mtime,time_macros"
         export CCACHE_BASEDIR="$GITHUB_WORKSPACE"
         ccache --max-size=5G
-        ccache -z  # 重置 ccache 统计数据
 
     # 恢复构建缓存
     - name: Cache build dependencies
