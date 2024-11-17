@@ -21,14 +21,12 @@
 export PATH="/usr/lib/ccache:$PATH"
 export CCACHE_DIR="$HOME/.ccache"
 ccache --set-config=cache_dir=$CCACHE_DIR
-export CC="ccache gcc"
-export CXX="ccache g++"
 echo "1111"
-ls -l /usr/lib/ccache/
-echo $CC
-echo $CXX
-echo $PATH
 /usr/lib/ccache/gcc --version
+echo "2222"
+ccache gcc --version
+echo "3333"
+/usr/bin/ccache --version
 
 ccache -s -v
 
