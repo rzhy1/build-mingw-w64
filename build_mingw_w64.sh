@@ -23,6 +23,8 @@ export CCACHE_DIR="$HOME/.ccache"
 ccache --set-config=cache_dir=$CCACHE_DIR
 echo "1111"
 which -a gcc
+ccache gcc --version
+
 
 
 ccache -s -v
