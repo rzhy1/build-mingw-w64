@@ -21,6 +21,14 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build ccache
       
+    # 清除本地缓存
+    - name: Clean ccache
+      run: |
+        rm -rf ~/.ccache
+        rm -rf /home/runner/work/build-mingw-w64/build-mingw-w64/mingw-w64/src
+        rm -rf /home/runner/work/build-mingw-w64/build-mingw-w64/mingw-w64/bld
+        echo "本地缓存已清除."
+        
     - name: Set up ccache
       run: |
         mkdir -p ~/.ccache
@@ -31,11 +39,6 @@ jobs:
         export CCACHE_SLOPPINESS="file_macro,include_file_ctime,include_file_mtime,time_macros"
         export CCACHE_BASEDIR="$GITHUB_WORKSPACE"
         ccache --max-size=5G
-        sudo ccache -C
-        sudo rm -rf ~/.ccache/
-        sudo rm -rf ${{ github.workspace }}/mingw-w64/src/
-        sudo rm -rf ${{ github.workspace }}/mingw-w64/bld/
-        sudo rm -rf /home/runner/work/_temp
   
     - name: Cache build dependencies
       uses: actions/cache@v4
