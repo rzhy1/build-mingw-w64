@@ -105,6 +105,27 @@ execute()
 
     local elapsed_time=$((end_time - start_time))
     printf "Step completed in %d seconds\n" "$elapsed_time"
+}execute() {
+  local info_msg="$1"
+  local error_msg="$2"
+  shift 2
+
+  if [ ! "$error_msg" ]; then
+    error_msg="error"
+  fi
+
+  if [ "$info_msg" ]; then
+    printf "(%d/%d): %s... " "$CURRENT_STEP" "$TOTAL_STEPS" "$info_msg"
+    local start_time=$(date +%s%N) 
+  fi
+
+  "$@" >>"$LOG_FILE" 2>&1 || error_exit "$error_msg, check $LOG_FILE for details"
+
+  if [ "$info_msg" ]; then
+    local end_time=$(date +%s%N) 
+    local elapsed_time=$(( (end_time - start_time) / 1000000 )) 
+    printf "完成 (用时: %s ms)\n" "$elapsed_time"
+  fi
 }
 
 create_dir()
