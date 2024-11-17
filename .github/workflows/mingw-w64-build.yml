@@ -25,7 +25,7 @@ jobs:
       run: |
         mkdir -p $HOME/.ccache
         chmod -R 777 $HOME/.ccache
-        export PATH="/usr/lib/ccache:$PATH"
+        export PATH="/usr/bin/ccache:$PATH"
         export CCACHE_DIR="$HOME/.ccache"
         
     - name: Cache build dependencies
