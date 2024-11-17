@@ -34,7 +34,7 @@ jobs:
         export CCACHE_SLOPPINESS="file_macro,include_file_ctime,include_file_mtime,time_macros"
         export CCACHE_BASEDIR="$GITHUB_WORKSPACE"
         ccache --max-size=5G
-        ccache -C
+        sudo ccache -C
   
     - name: Cache build dependencies
       uses: actions/cache@v4
