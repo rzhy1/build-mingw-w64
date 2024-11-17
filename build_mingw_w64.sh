@@ -23,8 +23,8 @@ export CCACHE_DIR="$HOME/.ccache"
 ccache --set-config=cache_dir=$CCACHE_DIR
 export CC="ccache gcc"
 export CXX="ccache g++"
-which gcc
-which g++
+gcc --version
+g++ --version
 ccache -s -v
 
 MINGW_W64_BRANCH="master"
