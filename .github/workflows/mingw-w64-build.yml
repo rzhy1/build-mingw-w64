@@ -67,5 +67,5 @@ jobs:
         allowUpdates: true
         artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
-    #- name: Show ccache stats
-    #  run: ccache -s -v
+    - name: Show ccache stats
+      run: ccache -s -v
