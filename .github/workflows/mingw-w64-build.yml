@@ -21,13 +21,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build ccache
       
-    - name: Fix ccache directory permissions
+    - name: Set up ccache
       run: |
         mkdir -p ~/.ccache
         chmod -R 777 ~/.ccache
-      
-    - name: Set up ccache
-      run: |
         export PATH="/usr/lib/ccache:$PATH"
         export CCACHE_DIR="$HOME/.ccache"
         export CCACHE_NOHASHDIR=true
