@@ -80,32 +80,7 @@ arg_error()
     error_exit "$error_msg, see --help for options" "$error_msg"
 }
 
-execute()
-{
-    local info_msg="$1"
-    local error_msg="$2"
-    shift 2
-
-    if [ ! "$error_msg" ]; then
-        error_msg="error"
-    fi
-
-    local start_time
-    start_time=$(date +%s)
-
-    if [ "$info_msg" ]; then
-        printf "(%d/%d): %s\n" "$CURRENT_STEP" "$TOTAL_STEPS" "$info_msg"
-        CURRENT_STEP=$((CURRENT_STEP + 1))
-    fi
-
-    "$@" >>"$LOG_FILE" 2>&1 || error_exit "$error_msg, check $LOG_FILE for details"
-
-    local end_time
-    end_time=$(date +%s)
-
-    local elapsed_time=$((end_time - start_time))
-    printf "Step completed in %d seconds\n" "$elapsed_time"
-}execute() {
+execute() {
   local info_msg="$1"
   local error_msg="$2"
   shift 2
