@@ -24,12 +24,12 @@ jobs:
     # 清除本地缓存
     - name: Clean ccache
       run: |
-        rm -rf /home/runner/.ccache/*
-        rm -rf /home/runner/.ccache/ccache.conf
-        rm -rf /home/runner/work/_temp/ed164709-7597-4fd1-9bce-26f1372b6016/cache.tzst
-        rm -rf /home/runner/work/_temp
-        rm -rf /home/runner/work/build-mingw-w64/build-mingw-w64/mingw-w64/src
-        rm -rf /home/runner/work/build-mingw-w64/build-mingw-w64/mingw-w64/bld
+        sudo rm -rf /home/runner/.ccache/*
+        sudo rm -rf /home/runner/.ccache/ccache.conf
+        sudo rm -rf /home/runner/work/_temp/ed164709-7597-4fd1-9bce-26f1372b6016/cache.tzst
+        sudo rm -rf /home/runner/work/_temp
+        sudo rm -rf /home/runner/work/build-mingw-w64/build-mingw-w64/mingw-w64/src
+        sudo rm -rf /home/runner/work/build-mingw-w64/build-mingw-w64/mingw-w64/bld
         echo "本地缓存已清除."
         
     - name: Set up ccache
