@@ -22,7 +22,8 @@ export PATH="/usr/lib/ccache:$PATH"
 export CCACHE_DIR="$HOME/.ccache"
 ccache --set-config=cache_dir=$CCACHE_DIR
 echo "1111"
-which ccache
+ccache --show-config
+
 
 
 
