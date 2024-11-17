@@ -44,10 +44,10 @@ jobs:
           ~/.ccache
           ${{ github.workspace }}/mingw-w64/src
           ${{ github.workspace }}/mingw-w64/bld
-        key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh', '**/*.sh1') }}
+        key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
         restore-keys: |
-          ${{ runner.os }}-mingw-w641-
-          ${{ runner.os }}-1-
+          ${{ runner.os }}-mingw-w64-
+          ${{ runner.os }}-
 
     - name: Run build script
       env:
