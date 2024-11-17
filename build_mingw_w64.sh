@@ -90,11 +90,21 @@ execute()
         error_msg="error"
     fi
 
+    local start_time
+    start_time=$(date +%s)
+
     if [ "$info_msg" ]; then
         printf "(%d/%d): %s\n" "$CURRENT_STEP" "$TOTAL_STEPS" "$info_msg"
         CURRENT_STEP=$((CURRENT_STEP + 1))
     fi
+
     "$@" >>"$LOG_FILE" 2>&1 || error_exit "$error_msg, check $LOG_FILE for details"
+
+    local end_time
+    end_time=$(date +%s)
+
+    local elapsed_time=$((end_time - start_time))
+    printf "Step completed in %d seconds\n" "$elapsed_time"
 }
 
 create_dir()
