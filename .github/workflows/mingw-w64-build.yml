@@ -24,7 +24,7 @@ jobs:
     # 清除本地缓存
     - name: Clean ccache
       run: |
-        rm -rf ~/.ccache
+        rm -rf /home/runner/.ccache
         rm -rf /home/runner/work/build-mingw-w64/build-mingw-w64/mingw-w64/src
         rm -rf /home/runner/work/build-mingw-w64/build-mingw-w64/mingw-w64/bld
         echo "本地缓存已清除."
