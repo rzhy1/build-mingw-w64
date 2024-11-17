@@ -34,8 +34,6 @@ jobs:
         
     - name: Set up ccache
       run: |
-        mkdir -p ~/.ccache
-        chmod -R 777 ~/.ccache
         export PATH="/usr/lib/ccache:$PATH"
         export CCACHE_DIR="$HOME/.ccache"
         export CCACHE_NOHASHDIR=true
