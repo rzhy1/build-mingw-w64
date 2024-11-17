@@ -91,15 +91,15 @@ execute() {
 
   if [ "$info_msg" ]; then
     printf "(%d/%d): %s... " "$CURRENT_STEP" "$TOTAL_STEPS" "$info_msg"
-    local start_time=$(date +%s%N) 
+    local start_time=$(date +%s.%N) 
   fi
 
   "$@" >>"$LOG_FILE" 2>&1 || error_exit "$error_msg, check $LOG_FILE for details"
 
   if [ "$info_msg" ]; then
-    local end_time=$(date +%s%N) 
-    local elapsed_time=$(( (end_time - start_time) / 1000000 )) 
-    printf "完成 (用时: %s ms)\n" "$elapsed_time"
+    local end_time=$(date +%s.%N) 
+    local elapsed_time=$(echo "$end_time - $start_time" | awk '{printf "%.1f", $1}')
+    printf "(用时: %s s)\n" "$elapsed_time"
   fi
 }
 
