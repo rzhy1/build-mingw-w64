@@ -21,8 +21,8 @@
 export PATH="/usr/bin/ccache:$PATH"
 export CCACHE_DIR="$HOME/.ccache"
 ccache --set-config=cache_dir=$CCACHE_DIR
-echo "Using ccache: $(which ccache)"
-ccache --show-stats
+export CC="ccache gcc"
+export CXX="ccache g++"
 which gcc
 which g++
 ccache -s -v
