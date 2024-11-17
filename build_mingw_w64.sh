@@ -23,7 +23,7 @@ which g++
 
 #ROOT_PATH="${{ github.workspace }}/mingw-w64"
 # 设置 ccache 环境
-export PATH="/usr/lib/ccache:$PATH"
+export PATH="/usr/bin/ccache:$PATH"
 export CCACHE_DIR="$HOME/.ccache"
 ccache -s -v
 
