@@ -29,7 +29,15 @@ echo $CC
 echo $CXX
 echo $PATH
 /usr/lib/ccache/gcc --version
-
+ccache -p | grep 'compiler_check'
+sudo ln -sf /usr/bin/ccache /usr/local/bin/gcc
+sudo ln -sf /usr/bin/ccache /usr/local/bin/g++
+ccache gcc --version
+ccache g++ --version
+echo $CC
+echo $CXX
+echo $PATH
+/usr/lib/ccache/gcc --version
 
 ccache -s -v
 
