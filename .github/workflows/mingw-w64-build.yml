@@ -20,9 +20,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build ccache
-    - name: Clean ccache
-      run: |
-        ccache -C
   
     - name: Cache build dependencies
       uses: actions/cache@v4
@@ -32,9 +29,6 @@ jobs:
           ${{ github.workspace }}/mingw-w64/src
           ${{ github.workspace }}/mingw-w64/bld
         key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
-        restore-keys: |
-          ${{ runner.os }}-mingw-w64-
-          ${{ runner.os }}-
 
     - name: Run build script
       env:
