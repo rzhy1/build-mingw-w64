@@ -23,7 +23,6 @@ export CCACHE_DIR="$HOME/.ccache"
 export CCACHE_NOHASHDIR=true
 export CCACHE_SLOPPINESS="file_macro,include_file_ctime,include_file_mtime,time_macros"
 ccache -s -v
-echo "Using ccache directory: $CCACHE_DIR"
 
 MINGW_W64_BRANCH="master"
 BINUTILS_BRANCH="binutils-2_43-branch"
