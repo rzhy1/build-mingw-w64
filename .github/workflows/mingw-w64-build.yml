@@ -46,8 +46,8 @@ jobs:
           ${{ github.workspace }}/mingw-w64/bld
         key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh', '**/*.sh1') }}
         restore-keys: |
-          ${{ runner.os }}-mingw-w64-
-          ${{ runner.os }}-
+          ${{ runner.os }}-mingw-w641-
+          ${{ runner.os }}-1-
 
     - name: Run build script
       env:
