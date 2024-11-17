@@ -23,21 +23,14 @@ export CCACHE_DIR="$HOME/.ccache"
 ccache --set-config=cache_dir=$CCACHE_DIR
 export CC="ccache gcc"
 export CXX="ccache g++"
-ccache gcc --version
-ccache g++ --version
+echo "1111"
+ls -l /usr/lib/ccache/
+echo "2222"
+ls -l /usr/bin/ccache/
 echo $CC
 echo $CXX
 echo $PATH
-/usr/lib/ccache/gcc --version
-ccache -p | grep 'compiler_check'
-sudo ln -sf /usr/bin/ccache /usr/local/bin/gcc
-sudo ln -sf /usr/bin/ccache /usr/local/bin/g++
-ccache gcc --version
-ccache g++ --version
-echo $CC
-echo $CXX
-echo $PATH
-/usr/lib/ccache/gcc --version
+/usr/bin/ccache/gcc --version
 
 ccache -s -v
 
