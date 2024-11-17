@@ -20,7 +20,17 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build ccache
-
+    
+    - name: Set up ccache
+      run: |
+        mkdir -p ~/.ccache
+        chmod -R 777 ~/.ccache
+        export PATH="/usr/lib/ccache:$PATH"
+        export CCACHE_DIR="$HOME/.ccache"
+        export CCACHE_NOHASHDIR=true
+        export CCACHE_SLOPPINESS="file_macro,include_file_ctime,include_file_mtime,time_macros"
+        export CCACHE_BASEDIR="$GITHUB_WORKSPACE"   
+        
     - name: Cache build dependencies
       uses: actions/cache@v4
       with:
