@@ -21,43 +21,43 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build ccache
       
-    - name: Fix ccache directory permissions
-      run: |
-        mkdir -p ~/.ccache
-        chmod -R 777 ~/.ccache
+    #- name: Fix ccache directory permissions
+    #  run: |
+    #    mkdir -p ~/.ccache
+    #    chmod -R 777 ~/.ccache
       
     # 恢复 ccache 缓存
-    - name: Cache ccache
-      uses: actions/cache@v4
-      with:
-        path: ~/.ccache
-        key: ccache-${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h') }}
-        restore-keys: |
-          ccache-${{ runner.os }}-mingw-w64-
-          ccache-${{ runner.os }}-
+    #- name: Cache ccache
+    #  uses: actions/cache@v4
+    #  with:
+    #    path: ~/.ccache
+    #    key: ccache-${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h') }}
+    #    restore-keys: |
+    #      ccache-${{ runner.os }}-mingw-w64-
+    #      ccache-${{ runner.os }}-
 
     # 设置 ccache 环境变量
-    - name: Set up ccache
-      run: |
-        export PATH="/usr/lib/ccache:$PATH"
-        export CCACHE_DIR="$HOME/.ccache"
-        export CCACHE_NOHASHDIR=true
-        export CCACHE_SLOPPINESS="file_macro,include_file_ctime,include_file_mtime,time_macros"
-        export CCACHE_BASEDIR="$GITHUB_WORKSPACE"
-        ccache --max-size=5G
-        ccache -z  # 重置 ccache 统计数据
+    #- name: Set up ccache
+    #  run: |
+    #    export PATH="/usr/lib/ccache:$PATH"
+    #    export CCACHE_DIR="$HOME/.ccache"
+    #    export CCACHE_NOHASHDIR=true
+    #    export CCACHE_SLOPPINESS="file_macro,include_file_ctime,include_file_mtime,time_macros"
+    #    export CCACHE_BASEDIR="$GITHUB_WORKSPACE"
+    #    ccache --max-size=5G
+    #    ccache -z  # 重置 ccache 统计数据
 
     # 恢复构建缓存
-    - name: Cache build dependencies
-      uses: actions/cache@v4
-      with:
-        path: |
-          ${{ github.workspace }}/mingw-w64/src
-          ${{ github.workspace }}/mingw-w64/bld
-        key: build-${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
-        restore-keys: |
-          build-${{ runner.os }}-mingw-w64-
-          build-${{ runner.os }}-
+    #- name: Cache build dependencies
+    #  uses: actions/cache@v4
+    #  with:
+    #    path: |
+    #      ${{ github.workspace }}/mingw-w64/src
+    #      ${{ github.workspace }}/mingw-w64/bld
+    #    key: build-${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
+    #    restore-keys: |
+    #      build-${{ runner.os }}-mingw-w64-
+    #      build-${{ runner.os }}-
 
     - name: Run build script
       env:
@@ -79,5 +79,5 @@ jobs:
         allowUpdates: true
         artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Show ccache stats
-      run: ccache -s -v
+    #- name: Show ccache stats
+    #  run: ccache -s -v
