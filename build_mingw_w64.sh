@@ -91,17 +91,17 @@ execute() {
 
   if [ "$info_msg" ]; then
     printf "(%d/%d): %s... " "$CURRENT_STEP" "$TOTAL_STEPS" "$info_msg"
+    local start_time=$(date +%s%N)
     CURRENT_STEP=$((CURRENT_STEP + 1))
   fi
 
-  # 使用 time 命令计时
-  { time -p "$@"; } 2>&1 > /dev/null | grep real | awk '{printf "%.1f", $2}' > time_elapsed.txt
-  elapsed_time=$(cat time_elapsed.txt)
+  "$@" >>"$LOG_FILE" 2>&1 || error_exit "$error_msg, check $LOG_FILE for details"
 
   if [ "$info_msg" ]; then
-      printf "完成 (用时: %s s)\n" "$elapsed_time"
+    local end_time=$(date +%s%N)
+    local elapsed_time=$(( (end_time - start_time) / 1000000000 ))
+    printf "完成 (用时: %s s)\n" "$elapsed_time"
   fi
-  rm time_elapsed.txt
 }
 
 create_dir()
