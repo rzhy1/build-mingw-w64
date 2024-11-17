@@ -32,9 +32,9 @@ jobs:
         export CCACHE_BASEDIR="$GITHUB_WORKSPACE"
         ccache --max-size=5G
         sudo ccache -C
-        rm -f ~/.ccache/
-        rm -f ${{ github.workspace }}/mingw-w64/src/
-        rm -f ${{ github.workspace }}/mingw-w64/bld/
+        rm -rf ~/.ccache/
+        rm -rf ${{ github.workspace }}/mingw-w64/src/
+        rm -rf ${{ github.workspace }}/mingw-w64/bld/
   
     - name: Cache build dependencies
       uses: actions/cache@v4
