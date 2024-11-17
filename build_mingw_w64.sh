@@ -18,6 +18,7 @@
 
 #ROOT_PATH="${{ github.workspace }}/mingw-w64"
 # 设置 ccache 环境
+export PATH="/usr/bin/ccache:$PATH"
 export CCACHE_DIR="$HOME/.ccache"
 ccache --set-config=cache_dir=$CCACHE_DIR
 export CC="ccache gcc"
@@ -26,6 +27,9 @@ ccache gcc --version
 ccache g++ --version
 echo $CC
 echo $CXX
+echo $PATH
+/usr/lib/ccache/gcc --version
+
 
 ccache -s -v
 
