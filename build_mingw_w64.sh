@@ -20,6 +20,8 @@
 # 设置 ccache 环境
 export PATH="/usr/lib/ccache:$PATH"
 export CCACHE_DIR="$HOME/.ccache"
+export CCACHE_NOHASHDIR=1
+export CCACHE_NODIRECT=1
 ccache --set-config=cache_dir=$CCACHE_DIR
 echo "1111"
 which gcc
