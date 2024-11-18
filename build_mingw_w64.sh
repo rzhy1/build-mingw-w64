@@ -155,6 +155,9 @@ download_sources()
     execute "downloading config.guess" "" \
         curl -o config.guess \
             "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
+    echo "下载后显示"
+    which gcc
+    ccache -s -v
 }
 
 build()
@@ -195,7 +198,11 @@ build()
 
     execute "($arch): installing Binutils" "" \
         make install
-
+        
+    echo "安装installing Binutils后显示"
+    which gcc
+    ccache -s -v
+    
     create_dir "$bld_path/mingw-w64-headers"
     change_dir "$bld_path/mingw-w64-headers"
 
@@ -206,7 +213,9 @@ build()
 
     execute "($arch): installing MinGW-w64 headers" "" \
         make install
-
+    echo "安装MinGW-w64 headers后显示"
+    which gcc
+    ccache -s -v
     create_dir "$bld_path/gcc"
     change_dir "$bld_path/gcc"
 
@@ -220,7 +229,9 @@ build()
         make -j $JOB_COUNT all-gcc
     execute "($arch): installing GCC (install-gcc)" "" \
         make install-gcc
-
+    echo "安装all-gcc后显示"
+    which gcc
+    ccache -s -v
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
 
@@ -234,7 +245,9 @@ build()
         make -j $JOB_COUNT
     execute "($arch): installing MinGW-w64 CRT" "" \
         make install
-
+    echo "安装MinGW-w64 CRT后显示"
+    which gcc
+    ccache -s -v
     if [ "$ENABLE_THREADS" ]; then
         create_dir "$bld_path/mingw-w64-winpthreads"
         change_dir "$bld_path/mingw-w64-winpthreads"
@@ -250,13 +263,18 @@ build()
         execute "($arch): installing winpthreads" "" \
             make install
     fi
-
+    echo "安装winpthreads后显示"
+    which gcc
+    ccache -s -v
     change_dir "$bld_path/gcc"
 
     execute "($arch): building GCC" "" \
         make -j $JOB_COUNT
     execute "($arch): installing GCC" "" \
         make install
+    echo "安装GCC后显示"
+    which gcc
+    ccache -s -v
 }
 
 while :; do
@@ -502,3 +520,6 @@ for add_to_path in "${ADD_TO_PATH[@]}"; do
 done
 
 exit 0
+    echo "最后显示"
+    which gcc
+    ccache -s -v
