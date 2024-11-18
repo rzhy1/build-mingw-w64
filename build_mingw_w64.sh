@@ -20,19 +20,9 @@
 # 设置 ccache 环境
 export PATH="/usr/lib/ccache:$PATH"
 export CCACHE_DIR="$HOME/.ccache"
-export CCACHE_NOHASHDIR=1
-export CCACHE_NODIRECT=1
 ccache --set-config=cache_dir=$CCACHE_DIR
 echo "1111"
 which gcc
-sudo rm /usr/lib/ccache/gcc
-sudo ln -s /usr/bin/ccache /usr/lib/ccache/gcc
-which gcc
-
-
-
-
-
 ccache -s -v
 
 MINGW_W64_BRANCH="master"
@@ -221,7 +211,7 @@ build()
     change_dir "$bld_path/gcc"
 
     execute "($arch): configuring GCC" "" \
-        "$SRC_PATH/gcc/configure" --target="$host" --disable-shared \
+        "$SRC_PATH/gcc/configure" --target="$host" --config-cache --disable-shared \
             --enable-static --disable-multilib --prefix="$prefix" \
             --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
             $x86_dwarf2
@@ -235,7 +225,7 @@ build()
     change_dir "$bld_path/mingw-w64-crt"
 
     execute "($arch): configuring MinGW-w64 CRT" "" \
-        "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --build="$BUILD" \
+        "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --config-cache --build="$BUILD" \
             --host="$host" --prefix="$prefix/$host" \
             --with-default-msvcrt=$LINKED_RUNTIME \
             --with-sysroot="$prefix/$host" $crt_lib
