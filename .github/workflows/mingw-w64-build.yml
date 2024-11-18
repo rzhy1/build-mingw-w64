@@ -27,8 +27,6 @@ jobs:
         chmod -R 777 $HOME/.ccache
         export PATH="/usr/lib/ccache:$PATH"
         export CCACHE_DIR="$HOME/.ccache"
-        export CCACHE_NOHASHDIR=1
-        export CCACHE_NODIRECT=1
         
     - name: Cache build dependencies
       uses: actions/cache@v4
