@@ -231,7 +231,7 @@ build()
             --with-sysroot="$prefix/$host" $crt_lib
 
     execute "($arch): building MinGW-w64 CRT" "" \
-        make -j $JOB_COUNT
+        make -j $JOB_COUNT --trace
     execute "($arch): installing MinGW-w64 CRT" "" \
         make install
 
@@ -254,7 +254,7 @@ build()
     change_dir "$bld_path/gcc"
 
     execute "($arch): building GCC" "" \
-        make -j $JOB_COUNT
+        make -j $JOB_COUNT --trace
     execute "($arch): installing GCC" "" \
         make install
 
