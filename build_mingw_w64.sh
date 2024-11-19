@@ -209,10 +209,9 @@ build()
 
     create_dir "$bld_path/gcc"
     change_dir "$bld_path/gcc"
-    export CC="ccache /usr/bin/gcc"
-    export CXX="ccache /usr/bin/g++"
+
     execute "($arch): configuring GCC" "" \
-            "$SRC_PATH/gcc/configure" --target="$host" --disable-shared \
+            "$SRC_PATH/gcc/configure" --cache-file=config.cache --target="$host" --disable-shared \
             --enable-static --disable-multilib --prefix="$prefix" \
             --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
             $x86_dwarf2
@@ -224,9 +223,9 @@ build()
 
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
-    unset CC
+
     execute "($arch): configuring MinGW-w64 CRT" "" \
-        "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --build="$BUILD" \
+        "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --cache-file=config.cache --build="$BUILD" \
             --host="$host" --prefix="$prefix/$host" \
             --with-default-msvcrt=$LINKED_RUNTIME \
             --with-sysroot="$prefix/$host" $crt_lib
@@ -253,8 +252,7 @@ build()
     fi
 
     change_dir "$bld_path/gcc"
-    export CC="ccache /usr/bin/gcc"
-    export CXX="ccache /usr/bin/g++"
+
     execute "($arch): building GCC" "" \
         make -j $JOB_COUNT
     execute "($arch): installing GCC" "" \
