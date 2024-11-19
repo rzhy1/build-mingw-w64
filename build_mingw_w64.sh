@@ -224,7 +224,7 @@ build()
 
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
-
+    unset CC
     execute "($arch): configuring MinGW-w64 CRT" "" \
         "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --build="$BUILD" \
             --host="$host" --prefix="$prefix/$host" \
