@@ -155,9 +155,6 @@ download_sources()
     execute "downloading config.guess" "" \
         curl -o config.guess \
             "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD"
-    echo "下载后显示"
-    which gcc
-    ccache -s -v
 }
 
 build()
@@ -198,10 +195,6 @@ build()
 
     execute "($arch): installing Binutils" "" \
         make install
-        
-    echo "安装installing Binutils后显示"
-    which gcc
-    ccache -s -v
     
     create_dir "$bld_path/mingw-w64-headers"
     change_dir "$bld_path/mingw-w64-headers"
@@ -213,14 +206,12 @@ build()
 
     execute "($arch): installing MinGW-w64 headers" "" \
         make install
-    echo "安装MinGW-w64 headers后显示"
-    which gcc
-    ccache -s -v
+
     create_dir "$bld_path/gcc"
     change_dir "$bld_path/gcc"
 
     execute "($arch): configuring GCC" "" \
-        "$SRC_PATH/gcc/configure" --target="$host" --config-cache --disable-shared \
+            CC="ccache gcc" CXX="ccache g++" "$SRC_PATH/gcc/configure" --target="$host" --disable-shared \
             --enable-static --disable-multilib --prefix="$prefix" \
             --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
             $x86_dwarf2
@@ -229,14 +220,12 @@ build()
         make -j $JOB_COUNT all-gcc
     execute "($arch): installing GCC (install-gcc)" "" \
         make install-gcc
-    echo "安装all-gcc后显示"
-    which gcc
-    ccache -s -v
+
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
 
     execute "($arch): configuring MinGW-w64 CRT" "" \
-        "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --config-cache --build="$BUILD" \
+        "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --build="$BUILD" \
             --host="$host" --prefix="$prefix/$host" \
             --with-default-msvcrt=$LINKED_RUNTIME \
             --with-sysroot="$prefix/$host" $crt_lib
@@ -245,9 +234,7 @@ build()
         make -j $JOB_COUNT
     execute "($arch): installing MinGW-w64 CRT" "" \
         make install
-    echo "安装MinGW-w64 CRT后显示"
-    which gcc
-    ccache -s -v
+
     if [ "$ENABLE_THREADS" ]; then
         create_dir "$bld_path/mingw-w64-winpthreads"
         change_dir "$bld_path/mingw-w64-winpthreads"
@@ -263,18 +250,14 @@ build()
         execute "($arch): installing winpthreads" "" \
             make install
     fi
-    echo "安装winpthreads后显示"
-    which gcc
-    ccache -s -v
+
     change_dir "$bld_path/gcc"
 
     execute "($arch): building GCC" "" \
         make -j $JOB_COUNT
     execute "($arch): installing GCC" "" \
         make install
-    echo "安装GCC后显示"
-    which gcc
-    ccache -s -v
+
 }
 
 while :; do
