@@ -209,9 +209,10 @@ build()
 
     create_dir "$bld_path/gcc"
     change_dir "$bld_path/gcc"
-
+    export CC="ccache /usr/bin/gcc"
+    export CXX="ccache /usr/bin/g++"
     execute "($arch): configuring GCC" "" \
-            CC="ccache gcc" CXX="ccache g++" "$SRC_PATH/gcc/configure" --target="$host" --disable-shared \
+            "$SRC_PATH/gcc/configure" --target="$host" --disable-shared \
             --enable-static --disable-multilib --prefix="$prefix" \
             --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
             $x86_dwarf2
