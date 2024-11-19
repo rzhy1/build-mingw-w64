@@ -27,6 +27,7 @@ jobs:
         chmod -R 777 $HOME/.ccache
         export PATH="/usr/lib/ccache:$PATH"
         export CCACHE_DIR="$HOME/.ccache"
+        compression = true
         
     - name: Cache build dependencies
       uses: actions/cache@v4
