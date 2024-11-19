@@ -253,7 +253,8 @@ build()
     fi
 
     change_dir "$bld_path/gcc"
-
+    export CC="ccache /usr/bin/gcc"
+    export CXX="ccache /usr/bin/g++"
     execute "($arch): building GCC" "" \
         make -j $JOB_COUNT
     execute "($arch): installing GCC" "" \
