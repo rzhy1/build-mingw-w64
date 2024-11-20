@@ -218,9 +218,12 @@ build()
             $x86_dwarf2
 
     execute "($arch): building GCC (all-gcc)" "" \
-        make -j $JOB_COUNT all-gcc
+        mkdir -p build
+        cd build
+        cmake -G Ninja $SRC_PATH
+        ninja -j $JOB_COUNT all-gcc
     execute "($arch): installing GCC (install-gcc)" "" \
-        make install-gcc
+        ninja install-gcc
 
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
