@@ -32,8 +32,9 @@ jobs:
       uses: actions/cache@v4
       with:
         path: |
-          ~/.buildcache
-          ${{ github.workspace }}/mingw-w64/x86_64
+          ~/.ccache
+          ${{ github.workspace }}/mingw-w64/src
+          ${{ github.workspace }}/mingw-w64/bld
         key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
 
 
