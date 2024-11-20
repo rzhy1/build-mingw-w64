@@ -23,6 +23,7 @@ export CCACHE_DIR="$HOME/.ccache"
 ccache --set-config=cache_dir=$CCACHE_DIR
 echo "1111"
 which gcc
+echo "SRC_PATH: $SRC_PATH"
 ccache -s -v
 
 MINGW_W64_BRANCH="master"
@@ -191,7 +192,6 @@ build()
             --disable-multilib --disable-nls --enable-lto --disable-gdb
 
     execute "($arch): building Binutils" "" \
-        echo "SRC_PATH: $SRC_PATH"
         make -j $JOB_COUNT
 
     execute "($arch): installing Binutils" "" \
