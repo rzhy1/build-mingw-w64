@@ -22,6 +22,7 @@ export PATH="/usr/local/bin:$PATH"
 echo "1111"
 which gcc
 echo "2222"
+sudo find / -type f -name gcc
 which buildcache
 echo "3333"
 buildcache -s -v
