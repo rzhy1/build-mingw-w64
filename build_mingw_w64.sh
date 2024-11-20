@@ -191,6 +191,7 @@ build()
             --disable-multilib --disable-nls --enable-lto --disable-gdb
 
     execute "($arch): building Binutils" "" \
+        echo "SRC_PATH: $SRC_PATH"
         make -j $JOB_COUNT
 
     execute "($arch): installing Binutils" "" \
@@ -503,6 +504,3 @@ for add_to_path in "${ADD_TO_PATH[@]}"; do
 done
 
 exit 0
-    echo "最后显示"
-    which gcc
-    ccache -s -v
