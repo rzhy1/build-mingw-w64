@@ -18,7 +18,7 @@
 
 #ROOT_PATH="${{ github.workspace }}/mingw-w64"
 # 设置 ccache 环境
-export PATH="/usr/bin/buildcache:$PATH"
+export PATH="/usr/lib/buildcache:$PATH"
 echo "1111"
 which gcc
 buildcache -s -v
