@@ -24,12 +24,13 @@ jobs:
     - name: buildcache
       run: |
         git clone https://gitlab.com/bits-n-bites/buildcache.git
-        cd buildcached
+        cd buildcache
         mkdir build
         cd build
         cmake ..
         make -j$(nproc)
         sudo make install
+        buildcache --version
         
     - name: Set up buildcache
       run: |
