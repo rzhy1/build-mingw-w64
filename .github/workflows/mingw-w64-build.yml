@@ -19,19 +19,14 @@ jobs:
     - name: Set up dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y g++ flex bison git m4 bzip2 curl make cmake diffutils ninja-build
-        
-    - name: Set up buildcache
+        sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build ccache
+    
+    - name: Set up ccache
       run: |
-        mkdir -p $HOME/.buildcache
-        chmod -R 777 $HOME/.buildcache
-        wget -O- https://gitlab.com/bits-n-bites/buildcache/-/archive/v0.31.2/buildcache-v0.31.2.tar.gz | tar xz
-        cd buildcache-*/src
-        cmake .
-        make -j$(nproc)
-        sudo make install
-        buildcache --version
-
+        mkdir -p $HOME/.ccache
+        chmod -R 777 $HOME/.ccache
+        export PATH="/usr/lib/ccache:$PATH"
+        export CCACHE_DIR="$HOME/.ccache"
         
     - name: Cache build dependencies
       uses: actions/cache@v4
