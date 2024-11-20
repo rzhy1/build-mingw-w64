@@ -24,9 +24,8 @@ jobs:
     - name: buildcache
       run: |
         wget -O- https://gitlab.com/bits-n-bites/buildcache/-/archive/v0.31.2/buildcache-v0.31.2.tar.gz | tar xz
-        cd buildcache-*
-        cd src
-        cmake ..
+        cd buildcache-*/src
+        cmake .
         make -j$(nproc)
         sudo make install
         buildcache --version
