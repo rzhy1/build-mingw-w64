@@ -18,15 +18,12 @@
 
 #ROOT_PATH="${{ github.workspace }}/mingw-w64"
 # 设置 ccache 环境
-export PATH="/usr/local/bin/buildcache:$PATH"
-sudo ln -sf /usr/local/bin/buildcache /usr/bin/gcc
-sudo ln -sf /usr/local/bin/buildcache /usr/bin/g++
+export PATH="/usr/lib/ccache:$PATH"
+export CCACHE_DIR="$HOME/.ccache"
+ccache --set-config=cache_dir=$CCACHE_DIR
 echo "1111"
 which gcc
-echo "2222"
-which buildcache
-echo "3333"
-buildcache -s -v
+ccache -s -v
 
 MINGW_W64_BRANCH="master"
 BINUTILS_BRANCH="binutils-2_43-branch"
