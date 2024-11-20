@@ -18,11 +18,12 @@
 
 #ROOT_PATH="${{ github.workspace }}/mingw-w64"
 # 设置 ccache 环境
-export PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/bin/buildcache:$PATH"
+sudo ln -sf /usr/local/bin/buildcache /usr/bin/gcc
+sudo ln -sf /usr/local/bin/buildcache /usr/bin/g++
 echo "1111"
 which gcc
 echo "2222"
-sudo find / -type f -name gcc
 which buildcache
 echo "3333"
 buildcache -s -v
@@ -218,13 +219,10 @@ build()
             --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
             $x86_dwarf2
 
-    execute "($arch): building GCC (all-gcc)" "" \
-        mkdir -p build
-        cd build
-        cmake -G Ninja $SRC_PATH
-        ninja -j $JOB_COUNT all-gcc
+   execute "($arch): building GCC (all-gcc)" "" \
+        make -j $JOB_COUNT all-gcc
     execute "($arch): installing GCC (install-gcc)" "" \
-        ninja install-gcc
+        make install-gcc
 
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
