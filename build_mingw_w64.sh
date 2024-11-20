@@ -21,6 +21,8 @@
 export PATH="/usr/lib/buildcache:$PATH"
 echo "1111"
 which gcc
+which buildcache
+which buildcache gcc
 buildcache -s -v
 
 MINGW_W64_BRANCH="master"
