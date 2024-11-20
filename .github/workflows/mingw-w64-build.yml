@@ -19,26 +19,30 @@ jobs:
     - name: Set up dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build ccache
+        sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build buildcache
     
-    - name: Set up ccache
+    - name: Set up buildcache
       run: |
-        mkdir -p $HOME/.ccache
-        chmod -R 777 $HOME/.ccache
-        export PATH="/usr/lib/ccache:$PATH"
-        export CCACHE_DIR="$HOME/.ccache"
+        mkdir -p $HOME/.buildcache
+        chmod -R 777 $HOME/.buildcache
+        export PATH="/usr/bin/buildcache:$PATH"
+        buildcache --config set storage_local $HOME/.buildcache
+        buildcache --config set max_size 10G
         
     - name: Cache build dependencies
       uses: actions/cache@v4
       with:
         path: |
-          ~/.ccache
+          ~/.buildcache
           ${{ github.workspace }}/mingw-w64/x86_64
         key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
+
 
     - name: Run build script
       env:
         ROOT_PATH: ${{ github.workspace }}/mingw-w64
+        CC: "buildcache gcc"
+        CXX: "buildcache g++"
       run: |
         chmod +x ./build_mingw_w64.sh
         ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  --keep-artifacts  x86_64
