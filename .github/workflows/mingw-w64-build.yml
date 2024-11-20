@@ -21,7 +21,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y g++ flex bison git m4 bzip2 curl make cmake diffutils ninja-build
     
-    - name: buildcache
+    - name: Set up  buildcache
       run: |
         wget -O- https://gitlab.com/bits-n-bites/buildcache/-/archive/v0.31.2/buildcache-v0.31.2.tar.gz | tar xz
         cd buildcache-*/src
@@ -35,8 +35,6 @@ jobs:
         mkdir -p $HOME/.buildcache
         chmod -R 777 $HOME/.buildcache
         export PATH="/usr/bin/buildcache:$PATH"
-        buildcache --config set storage_local $HOME/.buildcache
-        buildcache --config set max_size 10G
         
     - name: Cache build dependencies
       uses: actions/cache@v4
