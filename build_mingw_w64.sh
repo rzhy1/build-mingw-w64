@@ -21,7 +21,7 @@
 export PATH="/usr/bin/buildcache:$PATH"
 echo "1111"
 which gcc
-ccache -s -v
+buildcache -s -v
 
 MINGW_W64_BRANCH="master"
 BINUTILS_BRANCH="binutils-2_43-branch"
