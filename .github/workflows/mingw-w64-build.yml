@@ -33,8 +33,6 @@ jobs:
       with:
         path: |
           ~/.ccache
-          ${{ github.workspace }}/mingw-w64/src
-          ${{ github.workspace }}/mingw-w64/bld
         key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
 
 
