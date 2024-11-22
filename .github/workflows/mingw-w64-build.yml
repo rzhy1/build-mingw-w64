@@ -33,32 +33,15 @@ jobs:
       with:
         path: |
           ~/.ccache
+          ${{ github.workspace }}/mingw-w64/x86_64
         key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
-        restore-keys: |
-            ${{ runner.os }}-ccache-
-
-    - name: Cache source files
-      uses: actions/cache@v4
-      with:
-          path: ${{ github.workspace }}/mingw-w64/src
-          key: ${{ runner.os }}-src-${{ hashFiles('**/*.sh') }}
-          restore-keys: |
-            ${{ runner.os }}-src-
-
-    - name: Cache build artifacts
-      uses: actions/cache@v4
-      with:
-          path: ${{ github.workspace }}/mingw-w64/bld
-          key: ${{ runner.os }}-bld-${{ hashFiles('**/*.sh') }}
-          restore-keys: |
-            ${{ runner.os }}-bld-
 
     - name: Run build script
       env:
         ROOT_PATH: ${{ github.workspace }}/mingw-w64
       run: |
         chmod +x ./build_mingw_w64.sh
-        ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  --keep-artifacts --cached-sources x86_64
+        ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  --keep-artifacts  x86_64
     
     - name: zip
       if: success()
