@@ -58,7 +58,7 @@ jobs:
         ROOT_PATH: ${{ github.workspace }}/mingw-w64
       run: |
         chmod +x ./build_mingw_w64.sh
-        ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  --keep-artifacts --cached-sources  x86_64
+        ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  --keep-artifacts  x86_64
     
     - name: zip
       if: success()
