@@ -17,13 +17,6 @@
 #
 
 #ROOT_PATH="${{ github.workspace }}/mingw-w64"
-# 设置 ccache 环境
-export PATH="/usr/lib/ccache:$PATH"
-export CCACHE_DIR="$HOME/.ccache"
-ccache --set-config=cache_dir=$CCACHE_DIR
-echo "1111"
-which gcc
-ccache -s -v
 
 MINGW_W64_BRANCH="master"
 BINUTILS_BRANCH="binutils-2_43-branch"
@@ -103,7 +96,7 @@ execute() {
   if [ "$info_msg" ]; then
     local end_time=$(date +%s%N)
     local elapsed_time=$(( (end_time - start_time) / 1000000000 ))
-    printf "完成 (用时: %s s)\n" "$elapsed_time"
+    printf "(用时: %s s)\n" "$elapsed_time"
   fi
 }
 
