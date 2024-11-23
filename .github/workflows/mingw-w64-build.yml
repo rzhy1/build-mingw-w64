@@ -20,28 +20,13 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build ccache
-    
-    - name: Set up ccache
-      run: |
-        mkdir -p $HOME/.ccache
-        chmod -R 777 $HOME/.ccache
-        export PATH="/usr/lib/ccache:$PATH"
-        export CCACHE_DIR="$HOME/.ccache"
-        
-    - name: Cache build dependencies
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.ccache
-          ${{ github.workspace }}/mingw-w64/x86_64
-        key: ${{ runner.os }}-mingw-w64-${{ hashFiles('**/Makefile', '**/*.c', '**/*.cpp', '**/*.h', '**/*.sh') }}
 
     - name: Run build script
       env:
         ROOT_PATH: ${{ github.workspace }}/mingw-w64
       run: |
         chmod +x ./build_mingw_w64.sh
-        ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  --keep-artifacts  x86_64
+        ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  x86_64
     
     - name: zip
       if: success()
@@ -56,5 +41,3 @@ jobs:
         allowUpdates: true
         artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Show ccache stats
-      run: ccache -s -v
