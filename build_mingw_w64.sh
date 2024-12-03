@@ -19,7 +19,8 @@
 #ROOT_PATH="${{ github.workspace }}/mingw-w64"
 
 MINGW_W64_BRANCH="master"
-BINUTILS_BRANCH="binutils-2_43-branch"
+BINUTILS_BRANCH="master"
+#BINUTILS_BRANCH="binutils-2_43-branch"
 GCC_BRANCH="trunk"
 #GCC_BRANCH="releases/gcc-14"
 
