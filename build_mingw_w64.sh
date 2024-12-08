@@ -142,8 +142,14 @@ download_sources()
             https://sourceware.org/git/binutils-gdb.git binutils
 
     execute "downloading GCC source" "" \
-        git clone --depth 1 -b "$GCC_BRANCH" \
-            https://gcc.gnu.org/git/gcc.git gcc
+        #git clone --depth 1 -b "$GCC_BRANCH" \
+        #    https://gcc.gnu.org/git/gcc.git gcc
+        git init gcc
+        cd gcc
+        git remote add origin https://gcc.gnu.org/git/gcc.git
+        git fetch --depth 1 origin e97179bacd067ccd3ee765632e0c034df152ccb6
+        git checkout e97179bacd067ccd3ee765632e0c034df152ccb6
+
 
     execute "downloading config.guess" "" \
         curl -o config.guess \
