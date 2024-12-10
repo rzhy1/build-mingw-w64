@@ -25,6 +25,7 @@ jobs:
       env:
         ROOT_PATH: ${{ github.workspace }}/mingw-w64
       run: |
+        pigz --version
         chmod +x ./build_mingw_w64.sh
         ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  x86_64
   
@@ -33,7 +34,7 @@ jobs:
       run: |
         cd ${{ github.workspace }}/mingw-w64/x86_64
         #zip -rq mingw-w64-x86_64-toolchain.zip *
-        lz4 -q -1 mingw-w64-x86_64-toolchain mingw-w64-x86_64-toolchain.lz4
+        tar -cf - * | pigz -c > mingw-w64-x86_64-toolchain.gz
 
     - name: Create Release
       uses: ncipollo/release-action@v1
