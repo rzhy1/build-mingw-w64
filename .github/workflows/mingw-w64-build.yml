@@ -20,7 +20,7 @@ jobs:
     - name: Set up dependencies
       run: |
         apt-get update
-        apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build texinfo zip
+        apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build texinfo p7zip
 
     - name: Run build script
       env:
@@ -29,26 +29,16 @@ jobs:
         chmod +x ./build_mingw_w64.sh
         ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  x86_64
   
-    #- name: zip
-    #  if: success()
-    #  run: |
-    #    cd ${{ github.workspace }}/mingw-w64/x86_64
-    #    zip -r mingw-w64-x86_64-toolchain.zip *
+    - name: zip
+      if: success()
+      run: |
+        cd ${{ github.workspace }}/mingw-w64/x86_64
+        7z a mingw-w64-x86_64-toolchain.7z *
 
-    - name: Archive mingw-w64-x86_64-toolchain.zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: mingw-w64-x86_64-toolchain
-        path: ${{ github.workspace }}/mingw-w64/x86_64/*
-    - name: download mingw-w64-x86_64-toolchain.zip
-      uses: actions/download-artifact@v4
-      with:
-        name: download mingw-w64-x86_64-toolchain
-        path: ${{ github.workspace }}/mingw-w64/x86_64/
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
         tag: mingw-w64
         allowUpdates: true
-        artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.zip"
+        artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.7z"
         token: ${{ secrets.GITHUB_TOKEN }}
