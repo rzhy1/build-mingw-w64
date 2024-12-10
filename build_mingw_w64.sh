@@ -79,54 +79,24 @@ execute() {
   local error_msg="$2"
   shift 2
 
-  if [ -z "$error_msg" ]; then
+  if [ ! "$error_msg" ]; then
     error_msg="error"
   fi
 
-  # 创建唯一的临时日志文件（基于步骤编号）
-  local step_log="$ROOT_PATH/step_${CURRENT_STEP}_log.txt"
-
-  # 定义锁文件路径
-  local lock_file="$ROOT_PATH/output.lock"
-
   if [ "$info_msg" ]; then
-    # 使用锁文件进行同步
-    {
-      flock -x 200
-      printf "(%d/%d): %s... " "$CURRENT_STEP" "$TOTAL_STEPS" "$info_msg"
-      local start_time=$(date +%s%N)
-      CURRENT_STEP=$((CURRENT_STEP + 1))
-      flock -u 200
-    } 200>"$lock_file"
+    printf "(%d/%d): %s... " "$CURRENT_STEP" "$TOTAL_STEPS" "$info_msg"
+    local start_time=$(date +%s%N)
+    CURRENT_STEP=$((CURRENT_STEP + 1))
   fi
 
-  # 执行命令并将输出重定向到临时日志文件
-  "$@" >>"$step_log" 2>&1 || {
-    # 如果命令失败，合并临时日志文件到总日志文件，并显示错误
-    cat "$step_log" >>"$LOG_FILE"
-    rm -f "$step_log"
-    error_exit "$error_msg, check $LOG_FILE for details"
-  }
+  "$@" >>"$LOG_FILE" 2>&1 || error_exit "$error_msg, check $LOG_FILE for details"
 
-  # 计算并记录步骤执行时间
   if [ "$info_msg" ]; then
     local end_time=$(date +%s%N)
     local elapsed_time=$(( (end_time - start_time) / 1000000000 ))
-
-    # 使用锁文件确保输出有序
-    {
-      flock -x 200
-      printf "(用时: %s s)\n" "$elapsed_time"
-      flock -u 200
-    } 200>"$lock_file"
+    printf "(用时: %s s)\n" "$elapsed_time"
   fi
-
-  # 合并临时日志文件到总日志文件
-  cat "$step_log" >>"$LOG_FILE"
-  rm -f "$step_log"
 }
-
-
 
 create_dir()
 {
