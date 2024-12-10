@@ -10,9 +10,9 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-24.04
-    container: ubuntu:devel
+    #container: ubuntu:devel
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -28,12 +28,13 @@ jobs:
       run: |
         chmod +x ./build_mingw_w64.sh
         ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  x86_64
-    
+  
     #- name: zip
     #  if: success()
     #  run: |
     #    cd ${{ github.workspace }}/mingw-w64/x86_64
     #    zip -r mingw-w64-x86_64-toolchain.zip *
+
     - name: Archive mingw-w64-x86_64-toolchain.zip
       uses: actions/upload-artifact@v4
       with:
