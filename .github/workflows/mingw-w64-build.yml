@@ -41,5 +41,5 @@ jobs:
       with:
         tag: mingw-w64
         allowUpdates: true
-        artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.lz4"
+        artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.gz"
         token: ${{ secrets.GITHUB_TOKEN }}
