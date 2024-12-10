@@ -18,8 +18,8 @@ jobs:
         
     - name: Set up dependencies
       run: |
-        apt-get update
-        apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build
+        sudo apt-get update
+        sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build
 
     - name: Run build script
       env:
