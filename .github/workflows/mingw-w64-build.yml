@@ -12,7 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    container: ubuntu:devel
+    container:
+      image: ubuntu:devel
+      options: --workdir /__w/build-mingw-w64/build-mingw-w64
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
