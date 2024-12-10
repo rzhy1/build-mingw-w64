@@ -12,7 +12,6 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-24.04
-    container: ubuntu:devel
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -20,7 +19,7 @@ jobs:
     - name: Set up dependencies
       run: |
         apt-get update
-        apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build texinfo p7zip
+        apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build
 
     - name: Run build script
       env:
