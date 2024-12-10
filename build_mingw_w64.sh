@@ -169,70 +169,64 @@ build()
         "$SRC_PATH/binutils/configure" --prefix="$prefix" --disable-shared \
             --enable-static --with-sysroot="$prefix" --target="$host" \
             --disable-multilib --disable-nls --enable-lto --disable-gdb
-
     execute "($arch): building Binutils" "" \
         make -j $JOB_COUNT
-
     execute "($arch): installing Binutils" "" \
         make install
     
     create_dir "$bld_path/mingw-w64-headers"
     change_dir "$bld_path/mingw-w64-headers"
-
     execute "($arch): configuring MinGW-w64 headers" "" \
         "$SRC_PATH/mingw-w64/mingw-w64-headers/configure" --build="$BUILD" \
             --host="$host" --prefix="$prefix/$host" \
             --with-default-msvcrt=$LINKED_RUNTIME
-
     execute "($arch): installing MinGW-w64 headers" "" \
         make install
 
     create_dir "$bld_path/gcc"
     change_dir "$bld_path/gcc"
-
     execute "($arch): configuring GCC" "" \
             "$SRC_PATH/gcc/configure" --target="$host" --disable-shared \
             --enable-static --disable-multilib --prefix="$prefix" \
             --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
             $x86_dwarf2
-
-   execute "($arch): building GCC (all-gcc)" "" \
+    (
+    execute "($arch): building GCC (all-gcc)" "" \
         make -j $JOB_COUNT all-gcc
     execute "($arch): installing GCC (install-gcc)" "" \
         make install-gcc
-
+    ) &
+    
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
-
     execute "($arch): configuring MinGW-w64 CRT" "" \
         "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --build="$BUILD" \
             --host="$host" --prefix="$prefix/$host" \
             --with-default-msvcrt=$LINKED_RUNTIME \
             --with-sysroot="$prefix/$host" $crt_lib
-
+    (
     execute "($arch): building MinGW-w64 CRT" "" \
         make -j $JOB_COUNT
     execute "($arch): installing MinGW-w64 CRT" "" \
         make install
-
+    ) &
+    
     if [ "$ENABLE_THREADS" ]; then
         create_dir "$bld_path/mingw-w64-winpthreads"
         change_dir "$bld_path/mingw-w64-winpthreads"
-
         execute "($arch): configuring winpthreads" "" \
             "$SRC_PATH/mingw-w64/mingw-w64-libraries/winpthreads/configure" \
                 --build="$BUILD" --host="$host" --disable-shared \
                 --enable-static --prefix="$prefix/$host"
-
         execute "($arch): building winpthreads" "" \
             make -j $JOB_COUNT
-
         execute "($arch): installing winpthreads" "" \
             make install
     fi
-
+    
+    wait
+    
     change_dir "$bld_path/gcc"
-
     execute "($arch): building GCC" "" \
         make -j $JOB_COUNT
     execute "($arch): installing GCC" "" \
@@ -461,5 +455,4 @@ echo "complete, to use MinGW-w64 everywhere add these to your \$PATH:"
 for add_to_path in "${ADD_TO_PATH[@]}"; do
     printf "\t%s\n" "$add_to_path"
 done
-
 exit 0
