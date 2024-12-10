@@ -12,15 +12,15 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-24.04
-    #container: ubuntu:devel
+    container: ubuntu:devel
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
         
     - name: Set up dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build texinfo zip
+        apt-get update
+        apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build texinfo zip
 
     - name: Run build script
       env:
@@ -39,7 +39,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: mingw-w64-x86_64-toolchain
-        path: ${{ github.workspace }}/mingw-w64/x86_64/
+        path: ${{ github.workspace }}/mingw-w64/x86_64/*
     - name: download mingw-w64-x86_64-toolchain.zip
       uses: actions/download-artifact@v4
       with:
