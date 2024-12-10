@@ -12,9 +12,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    container:
-      image: ubuntu:devel
-      options: --workdir /__w/build-mingw-w64/build-mingw-w64
+    container: ubuntu:devel
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -31,12 +29,21 @@ jobs:
         chmod +x ./build_mingw_w64.sh
         ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  x86_64
     
-    - name: zip
-      if: success()
-      run: |
-        cd ${{ github.workspace }}/mingw-w64/x86_64
-        zip -r mingw-w64-x86_64-toolchain.zip *
-
+    #- name: zip
+    #  if: success()
+    #  run: |
+    #    cd ${{ github.workspace }}/mingw-w64/x86_64
+    #    zip -r mingw-w64-x86_64-toolchain.zip *
+    - name: Archive mingw-w64-x86_64-toolchain.zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: mingw-w64-x86_64-toolchain
+        path: ${{ github.workspace }}/mingw-w64/x86_64/
+    - name: download mingw-w64-x86_64-toolchain.zip
+      uses: actions/download-artifact@v4
+      with:
+        name: download mingw-w64-x86_64-toolchain
+        path: ${{ github.workspace }}/mingw-w64/x86_64/
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
