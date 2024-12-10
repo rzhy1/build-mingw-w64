@@ -36,8 +36,6 @@ Usage:
   $0 [options] <arch>...
 
 Archs:
-  i586    Windows 32-bit for old CPUs (Intel Pentium (MMX), AMD K5, K6, K6-2, K6-III)
-  i686    Windows 32-bit (Intel P6 [Pentium Pro], AMD K7 and newer)
   x86_64  Windows 64-bit
 
 Options:
@@ -160,14 +158,9 @@ build()
     if [ ! "$PREFIX" ]; then
         remove_path "$prefix"
     fi
-
-    if [ "$arch" = "i586" ] || [ "$arch" = "i686" ]; then
-        local x86_dwarf2="--disable-sjlj-exceptions --with-dwarf2"
-        local crt_lib="--enable-lib32 --disable-lib64"
-    else
-        local x86_dwarf2=""
-        local crt_lib="--enable-lib64 --disable-lib32"
-    fi
+    
+    local x86_dwarf2=""
+    local crt_lib="--enable-lib64 --disable-lib32"
 
     create_dir "$bld_path/binutils"
     change_dir "$bld_path/binutils"
@@ -354,12 +347,6 @@ while :; do
         --mingw-w64-branch=)
             arg_error "'--mingw-w64-branch' requires a non-empty option argument"
             ;;
-        i586)
-            BUILD_I586=1
-            ;;
-        i686)
-            BUILD_I686=1
-            ;;
         x86_64)
             BUILD_X86_64=1
             ;;
@@ -380,7 +367,7 @@ while :; do
     shift
 done
 
-NUM_BUILDS=$((BUILD_I586 + BUILD_I686 + BUILD_X86_64))
+NUM_BUILDS=$((BUILD_X86_64))
 if [ "$NUM_BUILDS" -eq 0 ]; then
     arg_error "no ARCH was specified"
 fi
@@ -421,12 +408,8 @@ BLD_PATH="$ROOT_PATH/bld"
 LOG_FILE="$ROOT_PATH/build.log"
 
 if [ "$PREFIX" ]; then
-    I586_PREFIX="$PREFIX"
-    I686_PREFIX="$PREFIX"
     X86_64_PREFIX="$PREFIX"
 else
-    I586_PREFIX="$ROOT_PATH/i586"
-    I686_PREFIX="$ROOT_PATH/i686"
     X86_64_PREFIX="$ROOT_PATH/x86_64"
 fi
 
@@ -462,16 +445,6 @@ export CXXFLAGS="-g0"
 export LDFLAGS="-s"
 
 ADD_TO_PATH=()
-
-if [ "$BUILD_I586" ]; then
-    build i586 "$I586_PREFIX"
-    ADD_TO_PATH+=("'$I586_PREFIX/bin'")
-fi
-
-if [ "$BUILD_I686" ]; then
-    build i686 "$I686_PREFIX"
-    ADD_TO_PATH+=("'$I686_PREFIX/bin'")
-fi
 
 if [ "$BUILD_X86_64" ]; then
     build x86_64 "$X86_64_PREFIX"
