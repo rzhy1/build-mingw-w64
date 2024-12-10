@@ -32,12 +32,12 @@ jobs:
       if: success()
       run: |
         cd ${{ github.workspace }}/mingw-w64/x86_64
-        7z a mingw-w64-x86_64-toolchain.7z *
+        zip -r mingw-w64-x86_64-toolchain.zip *
 
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
         tag: mingw-w64
         allowUpdates: true
-        artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.7z"
+        artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.zip"
         token: ${{ secrets.GITHUB_TOKEN }}
