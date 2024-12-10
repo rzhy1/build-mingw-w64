@@ -183,7 +183,6 @@ build()
     execute "($arch): installing MinGW-w64 headers" "" \
         make install
         
-    (
     create_dir "$bld_path/gcc"
     change_dir "$bld_path/gcc"
     execute "($arch): configuring GCC" "" \
@@ -195,9 +194,7 @@ build()
         make -j $JOB_COUNT all-gcc
     execute "($arch): installing GCC (install-gcc)" "" \
         make install-gcc
-    ) &
     
-    (
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
     execute "($arch): configuring MinGW-w64 CRT" "" \
@@ -209,8 +206,6 @@ build()
         make -j $JOB_COUNT
     execute "($arch): installing MinGW-w64 CRT" "" \
         make install
-    ) &
-    wait
     
     if [ "$ENABLE_THREADS" ]; then
         create_dir "$bld_path/mingw-w64-winpthreads"
