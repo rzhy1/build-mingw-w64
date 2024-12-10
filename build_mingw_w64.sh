@@ -142,8 +142,7 @@ download_sources()
     wait
 }
 
-build()
-{
+build() {
     local arch="$1"
     local prefix="$2"
     shift 2
@@ -154,78 +153,121 @@ build()
     export PATH="$prefix/bin:$PATH"
 
     remove_path "$bld_path"
-    # don't remove a user defined prefix (could be /usr/local)
     if [ ! "$PREFIX" ]; then
         remove_path "$prefix"
     fi
-    
+
     local x86_dwarf2=""
     local crt_lib="--enable-lib64 --disable-lib32"
 
+    # 并行任务数组
+    parallel_tasks=()
+
+    # Binutils 构建任务
+    parallel_tasks+=("binutils_build" "$arch" "$prefix" "$bld_path" "$host")
+
+    # MinGW-w64 headers 构建任务  (可以与Binutils并行)
+    parallel_tasks+=("mingw_headers_build" "$arch" "$prefix" "$bld_path" "$host" "$LINKED_RUNTIME")
+
+    # MinGW-w64 CRT 构建任务 (依赖Binutils, 因此稍后执行)
+    parallel_tasks+=("mingw_crt_build" "$arch" "$prefix" "$bld_path" "$host" "$LINKED_RUNTIME" "$crt_lib")
+
+    # GCC 第一阶段构建任务 (依赖 Binutils, 因此稍后执行)
+    parallel_tasks+=("gcc_stage1_build" "$arch" "$prefix" "$bld_path" "$host" "$x86_dwarf2" "$ENABLE_THREADS")
+
+    # GCC 第二阶段构建任务 (依赖 MinGW-w64 CRT 和 GCC 第一阶段, 因此最后执行)
+    parallel_tasks+=("gcc_stage2_build" "$arch" "$prefix" "$bld_path" "$host" "$ENABLE_THREADS")
+
+
+
+    # 并行执行任务
+    for task_data in "${parallel_tasks[@]}"; do
+      case "$task_data" in
+        "binutils_build"*)
+            run_binutils_build "${task_data[@]:1}" &
+          ;;
+        "mingw_headers_build"*)
+            run_mingw_headers_build "${task_data[@]:1}" &
+          ;;
+        "mingw_crt_build"*)
+            run_mingw_crt_build "${task_data[@]:1}" &
+          ;;
+        "gcc_stage1_build"*)
+            run_gcc_stage1_build "${task_data[@]:1}" &
+          ;;
+        "gcc_stage2_build"*)
+            run_gcc_stage2_build "${task_data[@]:1}" &
+          ;;
+      esac
+    done
+
+    wait # 等待所有后台任务完成
+}
+
+
+# 辅助函数，分别执行每个构建步骤
+run_binutils_build() {
+    local arch="$1"
+    local prefix="$2"
+    local bld_path="$3"
+    local host="$4"
     create_dir "$bld_path/binutils"
     change_dir "$bld_path/binutils"
+    execute "($arch): configuring Binutils" "" "$SRC_PATH/binutils/configure" --prefix="$prefix" --disable-shared --enable-static --with-sysroot="$prefix" --target="$host" --disable-multilib --disable-nls --enable-lto --disable-gdb
+    execute "($arch): building Binutils" "" make -j $JOB_COUNT
+    execute "($arch): installing Binutils" "" make install
+}
 
-    execute "($arch): configuring Binutils" "" \
-        "$SRC_PATH/binutils/configure" --prefix="$prefix" --disable-shared \
-            --enable-static --with-sysroot="$prefix" --target="$host" \
-            --disable-multilib --disable-nls --enable-lto --disable-gdb
-    execute "($arch): building Binutils" "" \
-        make -j $JOB_COUNT
-    execute "($arch): installing Binutils" "" \
-        make install
-    
+run_mingw_headers_build() {
+    local arch="$1"
+    local prefix="$2"
+    local bld_path="$3"
+    local host="$4"
+    local runtime="$5"
     create_dir "$bld_path/mingw-w64-headers"
     change_dir "$bld_path/mingw-w64-headers"
-    execute "($arch): configuring MinGW-w64 headers" "" \
-        "$SRC_PATH/mingw-w64/mingw-w64-headers/configure" --build="$BUILD" \
-            --host="$host" --prefix="$prefix/$host" \
-            --with-default-msvcrt=$LINKED_RUNTIME
-    execute "($arch): installing MinGW-w64 headers" "" \
-        make install
-        
-    create_dir "$bld_path/gcc"
-    change_dir "$bld_path/gcc"
-    execute "($arch): configuring GCC" "" \
-            "$SRC_PATH/gcc/configure" --target="$host" --disable-shared \
-            --enable-static --disable-multilib --prefix="$prefix" \
-            --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
-            $x86_dwarf2
-    execute "($arch): building GCC (all-gcc)" "" \
-        make -j $JOB_COUNT all-gcc
-    execute "($arch): installing GCC (install-gcc)" "" \
-        make install-gcc
-    
+    execute "($arch): configuring MinGW-w64 headers" "" "$SRC_PATH/mingw-w64/mingw-w64-headers/configure" --build="$BUILD" --host="$host" --prefix="$prefix/$host" --with-default-msvcrt="$runtime"
+    execute "($arch): installing MinGW-w64 headers" "" make install
+}
+
+run_mingw_crt_build() {
+    local arch="$1"
+    local prefix="$2"
+    local bld_path="$3"
+    local host="$4"
+    local runtime="$5"
+    local crt_lib="$6"
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
-    execute "($arch): configuring MinGW-w64 CRT" "" \
-        "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --build="$BUILD" \
-            --host="$host" --prefix="$prefix/$host" \
-            --with-default-msvcrt=$LINKED_RUNTIME \
-            --with-sysroot="$prefix/$host" $crt_lib
-    execute "($arch): building MinGW-w64 CRT" "" \
-        make -j $JOB_COUNT
-    execute "($arch): installing MinGW-w64 CRT" "" \
-        make install
-    
-    if [ "$ENABLE_THREADS" ]; then
-        create_dir "$bld_path/mingw-w64-winpthreads"
-        change_dir "$bld_path/mingw-w64-winpthreads"
-        execute "($arch): configuring winpthreads" "" \
-            "$SRC_PATH/mingw-w64/mingw-w64-libraries/winpthreads/configure" \
-                --build="$BUILD" --host="$host" --disable-shared \
-                --enable-static --prefix="$prefix/$host"
-        execute "($arch): building winpthreads" "" \
-            make -j $JOB_COUNT
-        execute "($arch): installing winpthreads" "" \
-            make install
-    fi
-    
-    change_dir "$bld_path/gcc"
-    execute "($arch): building GCC" "" \
-        make -j $JOB_COUNT
-    execute "($arch): installing GCC" "" \
-        make install
+    execute "($arch): configuring MinGW-w64 CRT" "" "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --build="$BUILD" --host="$host" --prefix="$prefix/$host" --with-default-msvcrt="$runtime" --with-sysroot="$prefix/$host" "$crt_lib"
+    execute "($arch): building MinGW-w64 CRT" "" make -j $JOB_COUNT
+    execute "($arch): installing MinGW-w64 CRT" "" make install
+}
 
+run_gcc_stage1_build() {
+    local arch="$1"
+    local prefix="$2"
+    local bld_path="$3"
+    local host="$4"
+    local x86_dwarf2="$5"
+    local enable_threads="$6"
+    create_dir "$bld_path/gcc"
+    change_dir "$bld_path/gcc"
+    execute "($arch): configuring GCC" "" "$SRC_PATH/gcc/configure" --target="$host" --disable-shared --enable-static --disable-multilib --prefix="$prefix" --enable-languages=c,c++ --disable-nls "$enable_threads" "$x86_dwarf2"
+    execute "($arch): building GCC (all-gcc)" "" make -j $JOB_COUNT all-gcc
+    execute "($arch): installing GCC (install-gcc)" "" make install-gcc
+
+}
+
+run_gcc_stage2_build() {
+    local arch="$1"
+    local prefix="$2"
+    local bld_path="$3"
+    local host="$4"
+    local enable_threads="$5"
+    change_dir "$bld_path/gcc"
+    execute "($arch): building GCC" "" make -j $JOB_COUNT
+    execute "($arch): installing GCC" "" make install
 }
 
 while :; do
