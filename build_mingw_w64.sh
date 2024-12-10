@@ -182,7 +182,8 @@ build()
             --with-default-msvcrt=$LINKED_RUNTIME
     execute "($arch): installing MinGW-w64 headers" "" \
         make install
-
+        
+    (
     create_dir "$bld_path/gcc"
     change_dir "$bld_path/gcc"
     execute "($arch): configuring GCC" "" \
@@ -190,13 +191,13 @@ build()
             --enable-static --disable-multilib --prefix="$prefix" \
             --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
             $x86_dwarf2
-    (
     execute "($arch): building GCC (all-gcc)" "" \
         make -j $JOB_COUNT all-gcc
     execute "($arch): installing GCC (install-gcc)" "" \
         make install-gcc
     ) &
     
+    (
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
     execute "($arch): configuring MinGW-w64 CRT" "" \
@@ -204,12 +205,12 @@ build()
             --host="$host" --prefix="$prefix/$host" \
             --with-default-msvcrt=$LINKED_RUNTIME \
             --with-sysroot="$prefix/$host" $crt_lib
-    (
     execute "($arch): building MinGW-w64 CRT" "" \
         make -j $JOB_COUNT
     execute "($arch): installing MinGW-w64 CRT" "" \
         make install
     ) &
+    wait
     
     if [ "$ENABLE_THREADS" ]; then
         create_dir "$bld_path/mingw-w64-winpthreads"
@@ -223,8 +224,6 @@ build()
         execute "($arch): installing winpthreads" "" \
             make install
     fi
-    
-    wait
     
     change_dir "$bld_path/gcc"
     execute "($arch): building GCC" "" \
