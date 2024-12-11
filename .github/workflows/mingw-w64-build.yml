@@ -33,8 +33,7 @@ jobs:
       if: success()
       run: |
         cd ${{ github.workspace }}/mingw-w64/x86_64
-        #zip -rq mingw-w64-x86_64-toolchain.zip *
-        tar -cf - * | pigz -c > mingw-w64-x86_64-toolchain.gz || { echo "Failed to create or compress the archive"; exit 1; }
+        tar -cf - * | pigz -c > mingw-w64-x86_64-toolchain.gz
 
     - name: Create Release
       uses: ncipollo/release-action@v1
