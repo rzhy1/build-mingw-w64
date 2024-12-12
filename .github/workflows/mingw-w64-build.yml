@@ -33,7 +33,10 @@ jobs:
       if: success()
       run: |
         cd ${{ github.workspace }}/mingw-w64/x86_64
-        tar -cf - * | pigz -9 -p 8 -c > mingw-w64-x86_64-toolchain.gz
+        tar -cf - * | pigz -c > mingw-w64-x86_64-toolchain.gz
+        time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | pigz -9 -p 8 -c > mingw-w64-x86_64-toolchain.gz
+        time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | zstd -T0 > mingw-w64-x86_64-toolchain.gz
+        time tar -czf mingw-w64-x86_64-toolchain.gz --exclude=mingw-w64-x86_64-toolchain.gz *
 
     - name: Create Release
       uses: ncipollo/release-action@v1
