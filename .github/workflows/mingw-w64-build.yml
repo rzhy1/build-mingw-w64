@@ -19,31 +19,21 @@ jobs:
     - name: Set up dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build
-    - name: 下载测试
-      run: |
-        mkdir -p ${{ github.workspace }}/mingw-w64/x86_64
-        curl -SLf -o "/tmp/mingw-w64-x86_64-toolchain.gz" "https://github.com/rzhy1/build-mingw-w64/releases/download/mingw-w64/mingw-w64-x86_64-toolchain.gz"
-        gzip -dc "/tmp/mingw-w64-x86_64-toolchain.gz" | tar -xf - -C "${{ github.workspace }}/mingw-w64/x86_64"
-        cd ${{ github.workspace }}/mingw-w64/x86_64
-        time tar --zstd -cf "mingw-w64-x86_64-toolchain.tar.zst" *
+        sudo apt-get install -y ninja-build
 
-    #- name: Run build script
-    #  env:
-    #    ROOT_PATH: ${{ github.workspace }}/mingw-w64
-    #  run: |
-    #    pigz --version
-    #    chmod +x ./build_mingw_w64.sh
-    #    ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  x86_64
+    - name: Run build script
+      env:
+        ROOT_PATH: ${{ github.workspace }}/mingw-w64
+      run: |
+        pigz --version
+        chmod +x ./build_mingw_w64.sh
+        ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  x86_64
   
-    #- name: zip
-    #  if: success()
-    #  run: |
-    #    cd ${{ github.workspace }}/mingw-w64/x86_64
-    #    tar -cf - * | pigz -c > mingw-w64-x86_64-toolchain.gz
-    #    time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | pigz -9 -c > mingw-w64-x86_64-toolchain.gz
-    #    time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | zstd -T0 > mingw-w64-x86_64-toolchain.gz
-    #    time tar -czf mingw-w64-x86_64-toolchain.gz --exclude=mingw-w64-x86_64-toolchain.gz *
+    - name: zip
+      if: success()
+      run: |
+        cd ${{ github.workspace }}/mingw-w64/x86_64
+        tar --zstd -cf "mingw-w64-x86_64-toolchain.tar.zst" *
 
     - name: Create Release
       uses: ncipollo/release-action@v1
