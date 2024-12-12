@@ -27,8 +27,11 @@ jobs:
         gzip -dc "/tmp/mingw-w64-x86_64-toolchain.gz" | tar -xf - -C "${{ github.workspace }}/xxx"
         cd ${{ github.workspace }}/xxx
         #tar -cf "mingw-w64-x86_64-toolchain.tar" *
-        time zstd -T0 -r "${{ github.workspace }}/xxx" -o "mingw-w64-x86_64-toolchain.zst"
-        time zstd -d "mingw-w64-x86_64-toolchain.zst" -o  "mingw-w64-x86_64-toolchain-zstd-decompress.tar"
+        timestamp=$(date +%s)
+        # 使用 tar --zstd 压缩目录
+        time tar --zstd -cf "mingw-w64-x86_64-toolchain-$timestamp.tar.zst" *
+        # 使用 tar --zstd 解压缩文件
+        time tar --zstd -xf "mingw-w64-x86_64-toolchain-$timestamp.tar.zst"
 
     - name: Run build script
       env:
