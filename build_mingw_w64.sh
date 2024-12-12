@@ -155,18 +155,18 @@ build() {
     if [ ! "$PREFIX" ]; then
         remove_path "$prefix"
     fi
-    
+
     local x86_dwarf2=""
     local crt_lib="--enable-lib64 --disable-lib32"
 
-    # 使用 & 将编译命令放入后台
+    # 配置阶段 (并行)
     create_dir "$bld_path/binutils"
     change_dir "$bld_path/binutils"
     execute "($arch): configuring Binutils" "" \
         "$SRC_PATH/binutils/configure" --prefix="$prefix" --disable-shared \
             --enable-static --with-sysroot="$prefix" --target="$host" \
             --disable-multilib --disable-nls --enable-lto --disable-gdb &
-    BINUTILS_PID=$! # 保存 Binutils 配置的 PID
+    BINUTILS_CONFIG_PID=$!
 
     create_dir "$bld_path/mingw-w64-headers"
     change_dir "$bld_path/mingw-w64-headers"
@@ -174,17 +174,17 @@ build() {
         "$SRC_PATH/mingw-w64/mingw-w64-headers/configure" --build="$BUILD" \
             --host="$host" --prefix="$prefix/$host" \
             --with-default-msvcrt=$LINKED_RUNTIME &
-    MINGW_HEADERS_PID=$! # 保存 MinGW-w64 headers 配置的 PID
-        
+    MINGW_HEADERS_CONFIG_PID=$!
+
     create_dir "$bld_path/gcc"
     change_dir "$bld_path/gcc"
     execute "($arch): configuring GCC" "" \
-            "$SRC_PATH/gcc/configure" --target="$host" --disable-shared \
-            --enable-static --disable-multilib --prefix="$prefix" \
-            --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
-            $x86_dwarf2 &
-    GCC_CONFIG_PID=$! # 保存 GCC 配置的 PID
-    
+        "$SRC_PATH/gcc/configure" --target="$host" --disable-shared \
+        --enable-static --disable-multilib --prefix="$prefix" \
+        --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
+        $x86_dwarf2 &
+    GCC_CONFIG_PID=$!
+
     create_dir "$bld_path/mingw-w64-crt"
     change_dir "$bld_path/mingw-w64-crt"
     execute "($arch): configuring MinGW-w64 CRT" "" \
@@ -192,8 +192,8 @@ build() {
             --host="$host" --prefix="$prefix/$host" \
             --with-default-msvcrt=$LINKED_RUNTIME \
             --with-sysroot="$prefix/$host" $crt_lib &
-     MINGW_CRT_CONFIG_PID=$! # 保存 MinGW-w64 CRT 配置的 PID
-    
+    MINGW_CRT_CONFIG_PID=$!
+
     if [ "$ENABLE_THREADS" ]; then
         create_dir "$bld_path/mingw-w64-winpthreads"
         change_dir "$bld_path/mingw-w64-winpthreads"
@@ -201,41 +201,39 @@ build() {
             "$SRC_PATH/mingw-w64/mingw-w64-libraries/winpthreads/configure" \
                 --build="$BUILD" --host="$host" --disable-shared \
                 --enable-static --prefix="$prefix/$host" &
-        WINPTHREADS_CONFIG_PID=$! # 保存 winpthreads 配置的 PID
+        WINPTHREADS_CONFIG_PID=$!
     fi
 
-   # 等待所有后台任务配置完成
-   wait "$BINUTILS_PID" "$MINGW_HEADERS_PID" "$GCC_CONFIG_PID" "$MINGW_CRT_CONFIG_PID" "$WINPTHREADS_CONFIG_PID"
+    wait "$BINUTILS_CONFIG_PID" "$MINGW_HEADERS_CONFIG_PID" "$GCC_CONFIG_PID" "$MINGW_CRT_CONFIG_PID" "$WINPTHREADS_CONFIG_PID"
 
-
-    #  并行执行 make
+  # 第一轮构建 (并行)
     change_dir "$bld_path/binutils"
     execute "($arch): building Binutils" "" make -j $JOB_COUNT &
-    BINUTILS_BUILD_PID=$!
+     BINUTILS_BUILD_PID=$!
 
     change_dir "$bld_path/mingw-w64-headers"
     execute "($arch): building MinGW-w64 headers" "" make -j $JOB_COUNT &
-    MINGW_HEADERS_BUILD_PID=$!
+     MINGW_HEADERS_BUILD_PID=$!
 
      change_dir "$bld_path/gcc"
     execute "($arch): building GCC (all-gcc)" "" make -j $JOB_COUNT all-gcc &
     GCC_ALL_GCC_BUILD_PID=$!
 
+
     change_dir "$bld_path/mingw-w64-crt"
     execute "($arch): building MinGW-w64 CRT" "" make -j $JOB_COUNT &
      MINGW_CRT_BUILD_PID=$!
-    
+
     if [ "$ENABLE_THREADS" ]; then
       change_dir "$bld_path/mingw-w64-winpthreads"
-      execute "($arch): building winpthreads" ""  make -j $JOB_COUNT &
-      WINPTHREADS_BUILD_PID=$!
+      execute "($arch): building winpthreads" "" make -j $JOB_COUNT &
+        WINPTHREADS_BUILD_PID=$!
     fi
 
-    #等待所有 make 构建任务完成
-   wait "$BINUTILS_BUILD_PID" "$MINGW_HEADERS_BUILD_PID" "$GCC_ALL_GCC_BUILD_PID" "$MINGW_CRT_BUILD_PID" "$WINPTHREADS_BUILD_PID"
+   wait "$BINUTILS_BUILD_PID" "$MINGW_HEADERS_BUILD_PID"  "$GCC_ALL_GCC_BUILD_PID" "$MINGW_CRT_BUILD_PID" "$WINPTHREADS_BUILD_PID"
 
-     # 并行执行 make install
-     change_dir "$bld_path/binutils"
+    # 第一轮安装 (并行)
+    change_dir "$bld_path/binutils"
     execute "($arch): installing Binutils" "" make install &
     BINUTILS_INSTALL_PID=$!
 
@@ -245,27 +243,26 @@ build() {
 
     change_dir "$bld_path/gcc"
     execute "($arch): installing GCC (install-gcc)" "" make install-gcc &
-     GCC_INSTALL_GCC_PID=$!
+    GCC_INSTALL_GCC_PID=$!
 
-   change_dir "$bld_path/mingw-w64-crt"
-    execute "($arch): installing MinGW-w64 CRT" ""  make install &
-    MINGW_CRT_INSTALL_PID=$!
-    
+    change_dir "$bld_path/mingw-w64-crt"
+    execute "($arch): installing MinGW-w64 CRT" "" make install &
+     MINGW_CRT_INSTALL_PID=$!
+
    if [ "$ENABLE_THREADS" ]; then
-       change_dir "$bld_path/mingw-w64-winpthreads"
-      execute "($arch): installing winpthreads" ""  make install &
-       WINPTHREADS_INSTALL_PID=$!
+        change_dir "$bld_path/mingw-w64-winpthreads"
+        execute "($arch): installing winpthreads" "" make install &
+        WINPTHREADS_INSTALL_PID=$!
    fi
-    
-    # 等待安装完成
-    wait "$BINUTILS_INSTALL_PID" "$MINGW_HEADERS_INSTALL_PID" "$GCC_INSTALL_GCC_PID" "$MINGW_CRT_INSTALL_PID" "$WINPTHREADS_INSTALL_PID"
+     wait  "$BINUTILS_INSTALL_PID" "$MINGW_HEADERS_INSTALL_PID" "$GCC_INSTALL_GCC_PID" "$MINGW_CRT_INSTALL_PID" "$WINPTHREADS_INSTALL_PID"
 
+
+    #  GCC (final build and install) 必须等到所有 install 完成之后才能执行
     change_dir "$bld_path/gcc"
      execute "($arch): building GCC" "" make -j $JOB_COUNT &
-    GCC_BUILD_PID=$!
-    
-     execute "($arch): installing GCC" "" make install
-    wait "$GCC_BUILD_PID"
+     GCC_BUILD_PID=$!
+    execute "($arch): installing GCC" "" make install
+     wait "$GCC_BUILD_PID"
 
 }
 
