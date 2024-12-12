@@ -27,9 +27,9 @@ jobs:
         gzip -dc "/tmp/mingw-w64-x86_64-toolchain.gz" | tar -xf - -C "${{ github.workspace }}/xxx"
         cd ${{ github.workspace }}/xxx
         timestamp=$(date +%s)
-        time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | pigz -9 -p 8 -c > "mingw-w64-x86_64-toolchain-pigz-$timestamp.gz"
-        time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | zstd -T0 > "mingw-w64-x86_64-toolchain-zstd-$timestamp.zst"
-        time tar -czf "mingw-w64-x86_64-toolchain-gzip-$timestamp.gz" --exclude=mingw-w64-x86_64-toolchain.gz *
+        time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | pigz -c > "mingw-w64-x86_64-toolchain-pigz-$timestamp.gz"
+        #time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | zstd -T0 > "mingw-w64-x86_64-toolchain-zstd-$timestamp.zst"
+        #time tar -czf "mingw-w64-x86_64-toolchain-gzip-$timestamp.gz" --exclude=mingw-w64-x86_64-toolchain.gz *
 
     - name: Run build script
       env:
