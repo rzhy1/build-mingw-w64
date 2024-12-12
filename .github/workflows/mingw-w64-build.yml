@@ -24,36 +24,31 @@ jobs:
       run: |
         mkdir -p ${{ github.workspace }}/xxx
         curl -SLf -o "/tmp/mingw-w64-x86_64-toolchain.gz" "https://github.com/rzhy1/build-mingw-w64/releases/download/mingw-w64/mingw-w64-x86_64-toolchain.gz"
-        gzip -dc "/tmp/mingw-w64-x86_64-toolchain.gz" | tar -xf - -C "${{ github.workspace }}/xxx"
-        cd ${{ github.workspace }}/xxx
-        #tar -cf "mingw-w64-x86_64-toolchain.tar" *
-        timestamp=$(date +%s)
-        # 使用 tar --zstd 压缩目录
-        time tar --zstd -cf "mingw-w64-x86_64-toolchain-$timestamp.tar.zst" *
-        # 使用 tar --zstd 解压缩文件
-        time tar --zstd -xf "mingw-w64-x86_64-toolchain-$timestamp.tar.zst"
-
-    - name: Run build script
-      env:
-        ROOT_PATH: ${{ github.workspace }}/mingw-w64
-      run: |
-        pigz --version
-        chmod +x ./build_mingw_w64.sh
-        ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  x86_64
-  
-    - name: zip
-      if: success()
-      run: |
+        gzip -dc "/tmp/mingw-w64-x86_64-toolchain.gz" | tar -xf - -C "${{ github.workspace }}/mingw-w64/x86_64"
         cd ${{ github.workspace }}/mingw-w64/x86_64
-        tar -cf - * | pigz -c > mingw-w64-x86_64-toolchain.gz
-        time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | pigz -9 -c > mingw-w64-x86_64-toolchain.gz
-        time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | zstd -T0 > mingw-w64-x86_64-toolchain.gz
-        time tar -czf mingw-w64-x86_64-toolchain.gz --exclude=mingw-w64-x86_64-toolchain.gz *
+        time tar --zstd -cf "mingw-w64-x86_64-toolchain.tar.zst" *
+
+    #- name: Run build script
+    #  env:
+    #    ROOT_PATH: ${{ github.workspace }}/mingw-w64
+    #  run: |
+    #    pigz --version
+    #    chmod +x ./build_mingw_w64.sh
+    #    ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  x86_64
+  
+    #- name: zip
+    #  if: success()
+    #  run: |
+    #    cd ${{ github.workspace }}/mingw-w64/x86_64
+    #    tar -cf - * | pigz -c > mingw-w64-x86_64-toolchain.gz
+    #    time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | pigz -9 -c > mingw-w64-x86_64-toolchain.gz
+    #    time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | zstd -T0 > mingw-w64-x86_64-toolchain.gz
+    #    time tar -czf mingw-w64-x86_64-toolchain.gz --exclude=mingw-w64-x86_64-toolchain.gz *
 
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
         tag: mingw-w64
         allowUpdates: true
-        artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.gz"
+        artifacts: "${{ github.workspace }}/mingw-w64/x86_64/mingw-w64-x86_64-toolchain.tar.zst"
         token: ${{ secrets.GITHUB_TOKEN }}
