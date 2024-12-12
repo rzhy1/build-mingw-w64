@@ -22,9 +22,9 @@ jobs:
         sudo apt-get install -y g++ flex bison git m4 bzip2 curl make diffutils ninja-build
     - name: 下载测试
       run: |
-        mkdir -p xxx
+        mkdir -p ${{ github.workspace }}/xxx
         curl -SLf -o "/tmp/mingw-w64-x86_64-toolchain.gz" "https://github.com/rzhy1/build-mingw-w64/releases/download/mingw-w64/mingw-w64-x86_64-toolchain.gz"
-        gzip -dc "/tmp/mingw-w64-x86_64-toolchain.gz" | tar -xf - -C "/xxx"
+        gzip -dc "/tmp/mingw-w64-x86_64-toolchain.gz" | tar -xf - -C "${{ github.workspace }}/xxx"
         time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | pigz -9 -p 8 -c > mingw-w64-x86_64-toolchain.gz
         time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | zstd -T0 > mingw-w64-x86_64-toolchain.gz
         time tar -czf mingw-w64-x86_64-toolchain.gz --exclude=mingw-w64-x86_64-toolchain.gz *
