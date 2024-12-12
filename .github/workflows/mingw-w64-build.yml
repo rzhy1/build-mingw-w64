@@ -29,7 +29,7 @@ jobs:
         chmod +x ./build_mingw_w64.sh
         ROOT_PATH=${{ github.workspace }}/mingw-w64 ./build_mingw_w64.sh  x86_64
   
-    - name: zip
+    - name: zstd compressing
       if: success()
       run: |
         cd ${{ github.workspace }}/mingw-w64/x86_64
