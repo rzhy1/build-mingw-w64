@@ -29,7 +29,7 @@ jobs:
         timestamp=$(date +%s)
         tar -cf "mingw-w64-x86_64-toolchain.tar" *
         #time tar -cf - --exclude=mingw-w64-x86_64-toolchain.gz * | pigz -c > "mingw-w64-x86_64-toolchain-pigz-$timestamp.gz"
-        time zstd -T0 mingw-w64-x86_64-toolchain.tar  "mingw-w64-x86_64-toolchain-zstd-$timestamp.zst"
+        time zstd -T0 "mingw-w64-x86_64-toolchain.tar" -o "mingw-w64-x86_64-toolchain-zstd-$timestamp.zst"
         #time tar -czf "mingw-w64-x86_64-toolchain-gzip-$timestamp.gz" --exclude=mingw-w64-x86_64-toolchain.gz *
 
     - name: Run build script
