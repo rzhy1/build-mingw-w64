@@ -20,7 +20,7 @@
 
 MINGW_W64_BRANCH="master"
 BINUTILS_BRANCH="binutils-2_43-branch"
-GCC_BRANCH="trunk"
+GCC_BRANCH="master"
 #GCC_BRANCH="releases/gcc-14"
 
 ENABLE_THREADS="--enable-threads=win32"
