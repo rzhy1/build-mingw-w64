@@ -23,7 +23,7 @@ BINUTILS_BRANCH="binutils-2_43-branch"
 GCC_BRANCH="trunk"
 #GCC_BRANCH="releases/gcc-14"
 
-ENABLE_THREADS="--enable-threads=posix"
+ENABLE_THREADS="--enable-threads=win32"
 
 JOB_COUNT=$(($(getconf _NPROCESSORS_ONLN) + 2))
 
