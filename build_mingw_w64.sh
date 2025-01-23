@@ -133,12 +133,13 @@ download_sources()
 
     execute "downloading MinGW-w64 source" "" git clone --depth 1 -b "$MINGW_W64_BRANCH" https://github.com/mingw-w64/mingw-w64.git mingw-w64 &
     execute "downloading Binutils source" "" git clone --depth 1 -b "$BINUTILS_BRANCH" https://sourceware.org/git/binutils-gdb.git binutils &
-    execute "downloading GCC source" "" git clone --depth 1 -b "$GCC_BRANCH" https://gcc.gnu.org/git/gcc.git gcc &    
+    execute "downloading GCC source" "" git clone --depth 1 -b "$GCC_BRANCH" https://gcc.gnu.org/git/gcc.git gcc &   
+    wait
     #execute "initializing and setting up GCC repository" "failed to setup GCC repository" \
     #  bash -c "git init gcc && cd gcc && git remote add origin https://gcc.gnu.org/git/gcc.git && git fetch --depth 1 origin e97179bacd067ccd3ee765632e0c034df152ccb6 && git checkout e97179bacd067ccd3ee765632e0c034df152ccb6"
     # execute "downloading config.guess" "" curl -o config.guess "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD" &
-    # execute "downloading config.guess" "" curl -o config.guess "https://git.savannah.gnu.org/cgit/config.git/plain/config.guess" &
-    wait
+    # execute "downloading config.guess" "" curl -o config.guess "https://git.savannah.gnu.org/cgit/config.git/plain/config.guess"
+    
 }
 
 build()
