@@ -138,7 +138,7 @@ download_sources()
     #execute "initializing and setting up GCC repository" "failed to setup GCC repository" \
     #  bash -c "git init gcc && cd gcc && git remote add origin https://gcc.gnu.org/git/gcc.git && git fetch --depth 1 origin e97179bacd067ccd3ee765632e0c034df152ccb6 && git checkout e97179bacd067ccd3ee765632e0c034df152ccb6"
     # execute "downloading config.guess" "" curl -o config.guess "https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD" &
-    # execute "downloading config.guess" "" curl -o config.guess "https://git.savannah.gnu.org/cgit/config.git/plain/config.guess"
+    execute "downloading config.guess" "" curl -o config.guess "https://git.savannah.gnu.org/cgit/config.git/plain/config.guess"
     
 }
 
