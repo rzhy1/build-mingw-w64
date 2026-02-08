@@ -133,7 +133,7 @@ download_sources()
     change_dir "$SRC_PATH"
 
     execute "downloading MinGW-w64 source" "" git clone --depth 1 -b "$MINGW_W64_BRANCH" https://github.com/mingw-w64/mingw-w64.git mingw-w64
-    execute "downloading Binutils source" "" git clone --depth 1 -b "$BINUTILS_BRANCH" https://github.com/bminor/binutils-gdb.git binutils
+    execute "downloading Binutils source" "" git clone --depth 1 -b "$BINUTILS_BRANCH" https://sourceware.org/git/binutils-gdb.git binutils
     execute "downloading GCC source" "" git clone --depth 1 -b "$GCC_BRANCH" https://github.com/gcc-mirror/gcc.git gcc  
     execute "downloading config.guess" "" curl -f -L -o config.guess "https://git.savannah.gnu.org/cgit/config.git/plain/config.guess" || exit 1 
     execute "setting permissions" "" chmod +x config.guess
