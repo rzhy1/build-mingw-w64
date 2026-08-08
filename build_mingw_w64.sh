@@ -26,7 +26,7 @@ GCC_BRANCH="master"
 ENABLE_THREADS="--enable-threads=win32"
 
 #OB_COUNT=$(($(getconf _NPROCESSORS_ONLN) +2))
-JOB_COUNT=$(nproc)
+JOB_COUNT=4
 
 LINKED_RUNTIME="msvcrt"
 
