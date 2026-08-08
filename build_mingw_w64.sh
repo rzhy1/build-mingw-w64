@@ -26,7 +26,7 @@ GCC_BRANCH="master"
 ENABLE_THREADS="--enable-threads=win32"
 
 #OB_COUNT=$(($(getconf _NPROCESSORS_ONLN) +2))
-JOB_COUNT=4
+JOB_COUNT=$(nproc)
 
 LINKED_RUNTIME="msvcrt"
 
@@ -164,7 +164,7 @@ build()
     execute "($arch): configuring Binutils" "" \
         "$SRC_PATH/binutils/configure" --prefix="$prefix" --disable-shared \
             --enable-static --with-sysroot="$prefix" --target="$host" \
-            --disable-multilib --disable-nls --enable-lto --disable-gdb
+            --disable-multilib --disable-nls --disable-lto --disable-gdb
     execute "($arch): building Binutils" "" \
         make -j $JOB_COUNT
     execute "($arch): installing Binutils" "" \
@@ -182,7 +182,7 @@ build()
     create_dir "$bld_path/gcc"
     change_dir "$bld_path/gcc"
     execute "($arch): configuring GCC" "" \
-            "$SRC_PATH/gcc/configure" --target="$host" --disable-shared \
+            "$SRC_PATH/gcc/configure" --target="$host" --disable-shared --disable-bootstrap --disable-libstdcxx-pch \
             --enable-static --disable-multilib --prefix="$prefix" \
             --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
             $x86_dwarf2
