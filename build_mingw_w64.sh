@@ -26,7 +26,7 @@ GCC_BRANCH="master"
 ENABLE_THREADS="--enable-threads=win32"
 
 #OB_COUNT=$(($(getconf _NPROCESSORS_ONLN) +2))
-JOB_COUNT=4
+JOB_COUNT=$(nproc)
 
 LINKED_RUNTIME="msvcrt"
 
@@ -185,6 +185,11 @@ build()
             "$SRC_PATH/gcc/configure" --target="$host" --disable-shared --disable-bootstrap --disable-libstdcxx-pch \
             --enable-static --disable-multilib --prefix="$prefix" \
             --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
+            --disable-libsanitizer \
+            --disable-libssp \
+            --disable-libgomp \
+            --disable-libquadmath \
+            --disable-libvtv \
             $x86_dwarf2
     execute "($arch): building GCC (all-gcc)" "" \
         make -j $JOB_COUNT all-gcc
