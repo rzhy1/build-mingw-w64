@@ -164,7 +164,7 @@ build()
     execute "($arch): configuring Binutils" "" \
         "$SRC_PATH/binutils/configure" --prefix="$prefix" --disable-shared \
             --enable-static --with-sysroot="$prefix" --target="$host" \
-            --disable-multilib --disable-nls --disable-lto --disable-gdb
+            --disable-multilib --disable-nls --disable-lto --disable-gdb --disable-werror --disable-dependency-tracking
     execute "($arch): building Binutils" "" \
         make -j $JOB_COUNT
     execute "($arch): installing Binutils" "" \
@@ -190,6 +190,10 @@ build()
             --disable-libgomp \
             --disable-libquadmath \
             --disable-libvtv \
+            --enable-checking=release \
+            --disable-werror \
+            --disable-decimal-float \
+            --disable-fixed-point \
             $x86_dwarf2
     execute "($arch): building GCC (all-gcc)" "" \
         make -j $JOB_COUNT all-gcc
@@ -202,6 +206,7 @@ build()
         "$SRC_PATH/mingw-w64/mingw-w64-crt/configure" --build="$BUILD" \
             --host="$host" --prefix="$prefix/$host" \
             --with-default-msvcrt=$LINKED_RUNTIME \
+            --disable-dependency-tracking \
             --with-sysroot="$prefix/$host" $crt_lib
     execute "($arch): building MinGW-w64 CRT" "" \
         make -j $JOB_COUNT
@@ -431,8 +436,8 @@ for i in mpc isl mpfr gmp; do
     ln -s "$SRC_PATH/gcc/$i" "$SRC_PATH/binutils/$i"
 done
 
-export CFLAGS="-g0"
-export CXXFLAGS="-g0"
+export CFLAGS="-O2 -pipe"
+export CXXFLAGS="-O2 -pipe"
 export LDFLAGS="-s"
 
 ADD_TO_PATH=()
