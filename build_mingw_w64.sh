@@ -23,7 +23,7 @@ BINUTILS_BRANCH="binutils-2_47-branch"
 GCC_BRANCH="master"
 #GCC_BRANCH="releases/gcc-14"
 
-ENABLE_THREADS="--enable-threads=win32"
+ENABLE_THREADS="--enable-threads=posix"
 
 #OB_COUNT=$(($(getconf _NPROCESSORS_ONLN) +2))
 JOB_COUNT=$(nproc)
@@ -183,6 +183,8 @@ build()
             --with-default-msvcrt=$LINKED_RUNTIME
     execute "($arch): installing MinGW-w64 headers" "" \
         make install
+    ln -snf . "$prefix/$host/mingw"
+    ln -snf "$prefix/$host" "$prefix/mingw"
         
     create_dir "$bld_path/gcc"
     change_dir "$bld_path/gcc"
@@ -201,7 +203,7 @@ build()
             --disable-fixed-point \
             --without-isl \
             --disable-plugin \
-            --disable-lto \
+            --enable-lto \
             $x86_dwarf2
     execute "($arch): building GCC (all-gcc)" "" \
         make -j $JOB_COUNT all-gcc
@@ -429,7 +431,7 @@ touch "$LOG_FILE"
 if [ ! "$CACHED_SOURCES" ]; then
     download_sources
 else
-    if [ ! -f "$SRC_PATH/config.guess" ]; then
+    if [ ! -f "$SRC_PATH/gcc" ]; then
         arg_error "no sources found, run with --keep-artifacts first"
     fi
 fi
