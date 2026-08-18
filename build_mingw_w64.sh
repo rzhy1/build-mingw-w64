@@ -381,7 +381,7 @@ fi
 TOTAL_STEPS=0
 
 if [ ! "$CACHED_SOURCES" ]; then
-    TOTAL_STEPS=$((TOTAL_STEPS + 5))  # 修复：从4改为5，包括config.guess
+    TOTAL_STEPS=$((TOTAL_STEPS + 3))  # 修复：从4改为5，包括config.guess
 fi
 
 # 修复步骤计数逻辑
@@ -430,15 +430,18 @@ else
 fi
 
 #BUILD=$(sh "$SRC_PATH/config.guess")
-BUILD=$(sh "$SRC_PATH/gcc/config.guess")
+#BUILD=$(sh "$SRC_PATH/gcc/config.guess")
+BUILD=$(gcc -dumpmachine)
 
 change_dir "$SRC_PATH/gcc"
 
 execute "" "failed to download GCC dependencies" \
     ./contrib/download_prerequisites  --no-isl
 
-for i in mpc isl mpfr gmp; do
-    ln -s "$SRC_PATH/gcc/$i" "$SRC_PATH/binutils/$i"
+for i in gmp mpfr; do
+    if [ -d "$SRC_PATH/gcc/$i" ]; then
+        ln -snf "$SRC_PATH/gcc/$i" "$SRC_PATH/binutils/$i"
+    fi
 done
 
 export CFLAGS="-O2 -g0 -pipe"
