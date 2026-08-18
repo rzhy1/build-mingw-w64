@@ -438,11 +438,11 @@ change_dir "$SRC_PATH/gcc"
 execute "" "failed to download GCC dependencies" \
     ./contrib/download_prerequisites  --no-isl
 
-for i in gmp mpfr; do
-    if [ -d "$SRC_PATH/gcc/$i" ]; then
-        ln -snf "$SRC_PATH/gcc/$i" "$SRC_PATH/binutils/$i"
-    fi
-done
+#for i in gmp mpfr; do
+#    if [ -d "$SRC_PATH/gcc/$i" ]; then
+#        ln -snf "$SRC_PATH/gcc/$i" "$SRC_PATH/binutils/$i"
+#    fi
+#done
 
 export CFLAGS="-O2 -g0 -pipe"
 export CXXFLAGS="-O2 -g0 -pipe"
