@@ -194,6 +194,9 @@ build()
             --disable-werror \
             --disable-decimal-float \
             --disable-fixed-point \
+            --without-isl \
+            --disable-plugin \
+            --disable-lto \
             $x86_dwarf2
     execute "($arch): building GCC (all-gcc)" "" \
         make -j $JOB_COUNT all-gcc
@@ -400,7 +403,8 @@ if [ "$ROOT_PATH_ARG" ]; then
 fi
 
 SRC_PATH="$ROOT_PATH/src"
-BLD_PATH="$ROOT_PATH/bld"
+#BLD_PATH="$ROOT_PATH/bld"
+BLD_PATH="/dev/shm/gcc-build"
 LOG_FILE="$ROOT_PATH/build.log"
 
 if [ "$PREFIX" ]; then
@@ -430,15 +434,15 @@ BUILD=$(sh "$SRC_PATH/config.guess")
 change_dir "$SRC_PATH/gcc"
 
 execute "" "failed to download GCC dependencies" \
-    ./contrib/download_prerequisites
+    ./contrib/download_prerequisites  --no-isl
 
 for i in mpc isl mpfr gmp; do
     ln -s "$SRC_PATH/gcc/$i" "$SRC_PATH/binutils/$i"
 done
 
-export CFLAGS="-O2 -pipe"
-export CXXFLAGS="-O2 -pipe"
-export LDFLAGS="-s"
+export CFLAGS="-O2 -g0 -pipe"
+export CXXFLAGS="-O2 -g0 -pipe"
+export LDFLAGS="-fuse-ld=mold -s"
 
 ADD_TO_PATH=()
 
