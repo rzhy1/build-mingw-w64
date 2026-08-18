@@ -19,7 +19,7 @@ jobs:
     - name: Set up dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y ninja-build
+        sudo apt-get install -y ninja-build mold
 
     - name: Run build script
       env:
