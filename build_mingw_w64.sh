@@ -197,7 +197,7 @@ build()
             --disable-libgomp \
             --disable-libquadmath \
             --disable-libvtv \
-            --enable-checking=release \
+            --disable-checking \
             --disable-werror \
             --disable-decimal-float \
             --disable-fixed-point \
