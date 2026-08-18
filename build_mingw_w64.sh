@@ -135,8 +135,8 @@ download_sources()
     execute "downloading MinGW-w64 source" "" git clone --depth 1 -b "$MINGW_W64_BRANCH" https://github.com/mingw-w64/mingw-w64.git mingw-w64
     execute "downloading Binutils source" "" git clone --depth 1 -b "$BINUTILS_BRANCH" https://gnu.googlesource.com/binutils-gdb binutils
     execute "downloading GCC source" "" git clone --depth 1 -b "$GCC_BRANCH" https://github.com/gcc-mirror/gcc.git gcc  
-    execute "downloading config.guess" "" curl -f -L -o config.guess "https://git.savannah.gnu.org/cgit/config.git/plain/config.guess" || exit 1 
-    execute "setting permissions" "" chmod +x config.guess
+    #execute "downloading config.guess" "" curl -f -L -o config.guess "https://git.savannah.gnu.org/cgit/config.git/plain/config.guess" || exit 1 
+    #execute "setting permissions" "" chmod +x config.guess
 }
 
 build()
@@ -429,7 +429,8 @@ else
     fi
 fi
 
-BUILD=$(sh "$SRC_PATH/config.guess")
+#BUILD=$(sh "$SRC_PATH/config.guess")
+BUILD=$(gcc -dumpmachine)
 
 change_dir "$SRC_PATH/gcc"
 
