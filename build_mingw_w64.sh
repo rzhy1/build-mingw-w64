@@ -23,7 +23,7 @@ BINUTILS_BRANCH="binutils-2_47-branch"
 GCC_BRANCH="master"
 #GCC_BRANCH="releases/gcc-14"
 
-ENABLE_THREADS="--enable-threads=win32"
+ENABLE_THREADS="--enable-threads=posix"
 
 #OB_COUNT=$(($(getconf _NPROCESSORS_ONLN) +2))
 JOB_COUNT=$(nproc)
@@ -183,7 +183,7 @@ build()
     change_dir "$bld_path/gcc"
     execute "($arch): configuring GCC" "" \
             "$SRC_PATH/gcc/configure" --target="$host" --disable-shared --disable-bootstrap --disable-libstdcxx-pch \
-            --enable-static --disable-multilib --prefix="$prefix" \
+            --enable-static --disable-multilib --with-sysroot="$prefix/$host"  --prefix="$prefix" \
             --enable-languages=c,c++ --disable-nls $ENABLE_THREADS \
             --disable-libsanitizer \
             --disable-libssp \
