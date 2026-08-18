@@ -23,7 +23,7 @@ BINUTILS_BRANCH="binutils-2_47-branch"
 GCC_BRANCH="master"
 #GCC_BRANCH="releases/gcc-14"
 
-ENABLE_THREADS="--enable-threads=posix"
+ENABLE_THREADS="--enable-threads=win32"
 
 #OB_COUNT=$(($(getconf _NPROCESSORS_ONLN) +2))
 JOB_COUNT=$(nproc)
@@ -63,6 +63,11 @@ error_exit()
         printf "%s\n" "$error_msg" >&2
     else
         printf "an error occured\n" >&2
+    fi
+    if [ -f "$LOG_FILE" ]; then
+        echo "====== LAST 40 LINES OF BUILD LOG ======" >&2
+        tail -n 40 "$LOG_FILE" >&2
+        echo "========================================" >&2
     fi
     exit 1
 }
