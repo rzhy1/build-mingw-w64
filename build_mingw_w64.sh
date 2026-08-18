@@ -430,7 +430,7 @@ else
 fi
 
 #BUILD=$(sh "$SRC_PATH/config.guess")
-BUILD=$(gcc -dumpmachine)
+BUILD=$(sh "$SRC_PATH/gcc/config.guess")
 
 change_dir "$SRC_PATH/gcc"
 
